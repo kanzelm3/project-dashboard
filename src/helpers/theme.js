@@ -15,7 +15,7 @@ export default {
     accent2Color: Colors.grey100,
     accent3Color: Colors.grey500,
     textColor: Colors.grey900,
-    alternateTextColor: Colors.grey500,
+    alternateTextColor: Colors.white,
     canvasColor: Colors.white,
     borderColor: Colors.grey300,
     disabledColor: ColorManipulator.fade(Colors.darkBlack, 0.3),
@@ -24,5 +24,5 @@ export default {
     track: '#64B5F6'
   },
   companyName: 'Archarithms, Inc',
-  appName: 'Radar Analysis Suite'
+  appName: 'Project Management Dashboard'
 };

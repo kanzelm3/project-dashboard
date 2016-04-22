@@ -161,9 +161,7 @@ export class CoreLayout extends React.Component {
     let title;
     if (router) {
       title =
-        router.isActive('/calls') ? 'Calls'
-        : router.isActive('/partners') ? 'Partners'
-        : router.isActive('/plot') ? 'Plots'
+        router.isActive('/projects') ? 'Projects'
         : Theme.appName;
     }
 
