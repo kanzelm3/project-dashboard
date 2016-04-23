@@ -16,12 +16,15 @@ class ProjectItem extends Component {
 
   constructor (props) {
     super(props);
+    const beginDate = moment(props.begin, 'MM-DD-YYYY');
+    const endDate = moment(props.end, 'MM-DD-YYYY');
+    const difference = endDate.diff(beginDate, 'days');
     this.state = {
       project: props.project,
       begin: props.begin,
       end: props.end,
       assignee: props.assignee,
-      duration: props.duration,
+      duration: difference,
       status: props.status,
       completeness: props.completeness
     };
@@ -32,7 +35,6 @@ class ProjectItem extends Component {
     begin: PropTypes.string,
     end: PropTypes.string,
     assignee: PropTypes.string,
-    duration: PropTypes.number,
     status: PropTypes.string,
     completeness: PropTypes.number
   }
@@ -122,6 +124,7 @@ class ProjectItem extends Component {
         <TableRowColumn>
           <TextField
             value={duration}
+            disabled
           />
         </TableRowColumn>
         <TableRowColumn>
@@ -151,12 +154,5 @@ class ProjectItem extends Component {
     );
   }
 }
-
-// {
-//   statuses.map((val, i) => <MenuItem
-//     value={val}
-//     key={i}
-//     primaryText={val} />)
-// }
 
 export default ProjectItem;

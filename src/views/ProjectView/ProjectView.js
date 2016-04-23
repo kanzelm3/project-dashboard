@@ -8,6 +8,8 @@ import TableHeader from 'material-ui/lib/table/table-header';
 import TableBody from 'material-ui/lib/table/table-body';
 import FloatingActionButton from 'material-ui/lib/floating-action-button';
 import ContentAdd from 'material-ui/lib/svg-icons/content/add';
+// other utilities
+import { sortBy } from 'lodash';
 
 class ProjectView extends Component {
 
@@ -20,7 +22,6 @@ class ProjectView extends Component {
           begin: '03/22/2016',
           end: '04/28/2016',
           assignee: 'Paddy Fotovich',
-          duration: 15,
           status: 'In Work',
           completeness: 0.90
         },
@@ -29,7 +30,6 @@ class ProjectView extends Component {
           begin: '01/01/2016',
           end: '01/15/2016',
           assignee: 'Kevin Kanzelmeyer',
-          duration: 15,
           status: 'Overdue',
           completeness: 0.60
         },
@@ -38,7 +38,6 @@ class ProjectView extends Component {
           begin: '03/01/2016',
           end: '04/22/2016',
           assignee: 'Adam Redmon',
-          duration: 13,
           status: 'In Work',
           completeness: 0.95
         }
@@ -49,6 +48,9 @@ class ProjectView extends Component {
 
   handleClick = (key) => (evt) => {
     console.debug(`${key} clicked`);
+    const vals = sortBy(this.state.projects, key);
+    this.setState({projects: vals});
+    console.debug(this.state);
   }
 
   addProject () {
@@ -60,7 +62,6 @@ class ProjectView extends Component {
           begin: '01/01/2016',
           end: '01/01/2016',
           assignee: 'Unassigned',
-          duration: 0,
           status: 'In Work',
           completeness: 0.0
         })
@@ -81,7 +82,7 @@ class ProjectView extends Component {
         fontWeight: 'bold'
       }
     };
-
+    console.debug('redrawing');
     return (
       <div>
         <Table>
@@ -141,6 +142,7 @@ class ProjectView extends Component {
           <TableBody>
           {
             projects.map((project, i) => {
+              console.debug(project);
               return (
                 <ProjectItem
                   key={i}
@@ -148,7 +150,6 @@ class ProjectView extends Component {
                   begin={project.begin}
                   end={project.end}
                   assignee={project.assignee}
-                  duration={project.duration}
                   status={project.status}
                   completeness={project.completeness}
                 />
