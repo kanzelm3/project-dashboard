@@ -1,10 +1,8 @@
 import { combineReducers } from 'redux';
 import { routeReducer as router } from 'react-router-redux';
-import dataModule from './modules/log-data';
-import metricsModule from './modules/track-ids';
+import projectsModule from './modules/projects';
 
 export default combineReducers({
-  data: dataModule,
-  metrics: metricsModule,
+  projects: projectsModule,
   router
 });

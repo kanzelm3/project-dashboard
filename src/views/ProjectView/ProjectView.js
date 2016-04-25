@@ -1,4 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { addProject } from '../../redux/modules/projects';
 // material ui
 import ProjectItem from 'components/ProjectItem/ProjectItem';
 import Table from 'material-ui/lib/table/table';
@@ -11,40 +14,46 @@ import ContentAdd from 'material-ui/lib/svg-icons/content/add';
 
 class ProjectView extends Component {
 
-  constructor () {
-    super();
-    this.state = {
-      projects: [
-        {
-          project: 'LPWS Refactor',
-          begin: '03/22/2016',
-          end: '04/28/2016',
-          assignee: 'Paddy Fotovich',
-          duration: 15,
-          status: 'In Work',
-          completeness: 0.90
-        },
-        {
-          project: 'End To End Sim Wrapper',
-          begin: '01/01/2016',
-          end: '01/15/2016',
-          assignee: 'Kevin Kanzelmeyer',
-          duration: 15,
-          status: 'Overdue',
-          completeness: 0.60
-        },
-        {
-          project: 'LPWS Phase III Mods',
-          begin: '03/01/2016',
-          end: '04/22/2016',
-          assignee: 'Adam Redmon',
-          duration: 13,
-          status: 'In Work',
-          completeness: 0.95
-        }
-      ]
-    };
-    this.addProject = this.addProject.bind(this);
+  // constructor (props) {
+  //   super(props);
+  //   const initialProjects = [
+  //     {
+  //       project: 'LPWS Refactor',
+  //       begin: '03/22/2016',
+  //       end: '04/28/2016',
+  //       assignee: 'Paddy Fotovich',
+  //       duration: 15,
+  //       status: 'In Work',
+  //       completeness: 0.90
+  //     },
+  //     {
+  //       project: 'End To End Sim Wrapper',
+  //       begin: '01/01/2016',
+  //       end: '01/15/2016',
+  //       assignee: 'Kevin Kanzelmeyer',
+  //       duration: 15,
+  //       status: 'Overdue',
+  //       completeness: 0.60
+  //     },
+  //     {
+  //       project: 'LPWS Phase III Mods',
+  //       begin: '03/01/2016',
+  //       end: '04/22/2016',
+  //       assignee: 'Adam Redmon',
+  //       duration: 13,
+  //       status: 'In Work',
+  //       completeness: 0.95
+  //     }
+  //   ];
+  //   const { addProject } = this.props;
+  //   initialProjects.forEach((project) => {
+  //     addProject(project);
+  //   });
+  // }
+
+  static propTypes = {
+    addProject: PropTypes.func,
+    projects: PropTypes.array
   }
 
   handleClick = (key) => (evt) => {
@@ -53,22 +62,25 @@ class ProjectView extends Component {
 
   addProject () {
     console.debug('adding project');
-    this.setState({
-      projects: this.state.projects.concat(
-        {
-          project: 'New Project',
-          begin: '01/01/2016',
-          end: '01/01/2016',
-          assignee: 'Unassigned',
-          duration: 0,
-          status: 'In Work',
-          completeness: 0.0
-        })
-    });
+    const newProject = {
+      project: 'New Project',
+      begin: '01/01/2016',
+      end: '01/01/2016',
+      assignee: 'Unassigned',
+      duration: 0,
+      status: 'In Work',
+      completeness: 0.0
+    };
+    addProject(newProject);
+    // this.setState({
+    //   projects: this.state.projects.concat(
+    //     newProject)
+    // });
   }
 
   render () {
-    const { projects } = this.state;
+    // const { projects } = this.state;
+    const { projects } = this.props;
     const styles = {
       columnHeader: {
         cursor: 'pointer',
@@ -158,7 +170,7 @@ class ProjectView extends Component {
           </TableBody>
         </Table>
         <FloatingActionButton style={{
-          position: 'absolute',
+          position: 'fixed',
           right: '3%',
           bottom: '5%'
         }}
@@ -170,4 +182,12 @@ class ProjectView extends Component {
   }
 }
 
-export default ProjectView;
+const mapStateToProps = (state) => ({
+  projects: [state.projects]
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  addProject
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
