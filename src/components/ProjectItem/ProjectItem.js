@@ -82,7 +82,7 @@ class ProjectItem extends Component {
       begin,
       end,
       assignee,
-      duration,
+      // duration,
       status,
       completeness } = this.state;
 
@@ -120,12 +120,6 @@ class ProjectItem extends Component {
               })
             }
           </SelectField>
-        </TableRowColumn>
-        <TableRowColumn>
-          <TextField
-            value={duration}
-            disabled
-          />
         </TableRowColumn>
         <TableRowColumn>
           <SelectField
