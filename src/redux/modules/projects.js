@@ -7,8 +7,53 @@ import Action from '../action';
  */
 export const type = {
   ADD_PROJECT: 'ADD_PROJECT',
-  SORT_ASC: 'SORT_ASC',
-  SORT_DES: 'SORT_DES'
+  UPDATE_PROJECT: 'UPDATE_PROJECT'
+};
+
+export const initialProjects = [
+  {
+    created: 1,
+    project: 'LPWS Refactor',
+    begin: '03/22/2016',
+    end: '04/28/2016',
+    assignee: 'Paddy Fotovich',
+    duration: 15,
+    status: 'In Work',
+    completeness: 0.90
+  },
+  {
+    created: 2,
+    project: 'End To End Sim Wrapper',
+    begin: '01/01/2016',
+    end: '01/15/2016',
+    assignee: 'Kevin Kanzelmeyer',
+    duration: 15,
+    status: 'Overdue',
+    completeness: 0.60
+  },
+  {
+    created: 3,
+    project: 'LPWS Phase III Mods',
+    begin: '03/01/2016',
+    end: '04/22/2016',
+    assignee: 'Adam Redmon',
+    duration: 13,
+    status: 'In Work',
+    completeness: 0.95
+  }
+];
+
+export const getNewProject = (millis) => {
+  return {
+    created: millis,
+    project: 'New Project',
+    begin: '01/01/2016',
+    end: '01/01/2016',
+    assignee: 'Unassigned',
+    duration: 0,
+    status: 'In Work',
+    completeness: 0.0
+  };
 };
 
 /**
@@ -22,17 +67,10 @@ export const addProject = (data) => {
   ).toObject();
 };
 
-export const sortAscending = (field) => {
+export const updateProject = (data) => {
   return new Action(
-    type.SORT_ASC,
-    field
-  ).toObject();
-};
-
-export const sortDescending = (field) => {
-  return new Action(
-    type.SORT_DES,
-    field
+    type.UPDATE_PROJECT,
+    data
   ).toObject();
 };
 
@@ -43,17 +81,12 @@ export const sortDescending = (field) => {
  */
 const projectReducer = (state = fromJS([]), action) => {
   switch (action.type) {
-
     case type.ADD_PROJECT:
+      console.debug(action.payload);
       return state.push(fromJS(action.payload));
 
-    case type.SORT_ASC:
-      return state.sortBy(
-        (val, key) => val.get(action.payload));
-
-    case type.SORT_DES:
-      return state.sortBy(
-        (val, key) => -val.get(action.payload));
+    case type.UPDATE_PROJECT:
+      return state.merge(fromJS(action.payload));
 
     default:
       return state;

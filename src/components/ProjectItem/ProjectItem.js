@@ -1,4 +1,7 @@
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { updateProject } from '../../redux/modules/projects';
 // material ui
 import DatePicker from 'material-ui/lib/date-picker/date-picker';
 import SelectField from 'material-ui/lib/select-field';
@@ -14,37 +17,28 @@ import { employeeNames, statusTypes } from './ProjectItemEnums';
 
 class ProjectItem extends Component {
 
-  constructor (props) {
-    super(props);
-    const beginDate = moment(props.begin, 'MM-DD-YYYY');
-    const endDate = moment(props.end, 'MM-DD-YYYY');
-    const difference = endDate.diff(beginDate, 'days');
-    this.state = {
-      project: props.project,
-      begin: props.begin,
-      end: props.end,
-      assignee: props.assignee,
-      duration: difference,
-      status: props.status,
-      completeness: props.completeness
-    };
+  constructor () {
+    super();
+    this.setAssignee = this.setAssignee.bind(this);
   }
 
   static propTypes = {
-    project: PropTypes.string,
-    begin: PropTypes.string,
-    end: PropTypes.string,
-    assignee: PropTypes.string,
-    status: PropTypes.string,
-    completeness: PropTypes.number
+    project: PropTypes.object,
+    updateProject: PropTypes.func
   }
 
-  setEmployee = (event, index, value) => {
-    this.setState({assignee: value});
+  setAssignee = (event, index, value) => {
+    const { project, updateProject } = this.props;
+    const newProject = project.set('assignee', value);
+    updateProject(newProject);
+    // this.setState({assignee: value});
   }
 
   setStatus = (event, index, value) => {
     this.setState({status: value});
+    if (value === 'Complete') {
+      this.setState({completeness: 1});
+    }
   }
 
   setBeginDate = (event, value) => {
@@ -52,17 +46,18 @@ class ProjectItem extends Component {
     const beginString = newBeginDate.format('MM/DD/YYYY');
     const endDate = moment(this.state.end, 'MM-DD-YYYY');
     const difference = endDate.diff(newBeginDate, 'days');
-    this.setState({begin: beginString,
+    this.setState({
+      begin: beginString,
       duration: difference});
-  }
+  };
 
   setEndDate = (event, value) => {
     const newEndDate = moment(value);
     const endString = newEndDate.format('MM/DD/YYYY');
-    console.debug(endString);
     const begin = moment(this.state.begin, 'MM-DD-YYYY');
     const difference = newEndDate.diff(begin, 'days');
-    this.setState({end: endString,
+    this.setState({
+      end: endString,
       duration: difference});
   }
 
@@ -77,38 +72,41 @@ class ProjectItem extends Component {
     }
   }
 
-  render () {
-    const { project,
-      begin,
-      end,
-      assignee,
-      // duration,
-      status,
-      completeness } = this.state;
+  setDuration = (event) => {
+    console.debug(event.target.value);
+  }
 
+  render () {
+    const { project } = this.props;
     return (
       <TableRow>
         <TableRowColumn>
           <TextField
-            defaultValue={project}
+            defaultValue={project.get('project')}
           />
+        </TableRowColumn>
+        <TableRowColumn style={{width: '110px'}}>
+          <TextField
+            defaultValue={project.get('duration')}
+            onEnterKeyDown={this.setDuration}
+            onBlur={this.setDuration} />
         </TableRowColumn>
         <TableRowColumn>
           <DatePicker
-            defaultValue={begin}
+            defaultValue={project.get('begin')}
             onChange={this.setBeginDate}
             autoOk />
         </TableRowColumn>
         <TableRowColumn>
           <DatePicker
-            defaultValue={end}
+            defaultValue={project.get('end')}
             onChange={this.setEndDate}
             autoOk />
         </TableRowColumn>
         <TableRowColumn>
           <SelectField
-            value={assignee}
-            onChange={this.setEmployee}>
+            value={project.get('assignee')}
+            onChange={this.setAssignee}>
             {
               map(employeeNames, (item, index) => {
                 return (
@@ -123,7 +121,7 @@ class ProjectItem extends Component {
         </TableRowColumn>
         <TableRowColumn>
           <SelectField
-            value={status}
+            value={project.get('status')}
             onChange={this.setStatus}>
             {
               map(statusTypes, (item, index) => {
@@ -140,7 +138,7 @@ class ProjectItem extends Component {
         <TableRowColumn>
           <div>
             <Slider step={0.05}
-              value={completeness}
+              value={project.get('completeness')}
               onChange={this.setCompleteness}/>
           </div>
         </TableRowColumn>
@@ -149,4 +147,8 @@ class ProjectItem extends Component {
   }
 }
 
-export default ProjectItem;
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  updateProject
+}, dispatch);
+
+export default connect(null, mapDispatchToProps)(ProjectItem);
