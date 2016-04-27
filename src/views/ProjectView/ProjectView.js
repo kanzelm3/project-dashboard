@@ -105,7 +105,6 @@ class ProjectView extends Component {
         verticalAlign: 'middle'
       }
     };
-
     return (
       <div>
         <Table>
@@ -160,7 +159,6 @@ class ProjectView extends Component {
           <TableBody>
           {
             sortedProjects.map((project, key) => {
-              console.debug(project, key);
               return (
                 <ProjectItem
                   key={key}

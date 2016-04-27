@@ -83,12 +83,11 @@ const projectReducer = (state = fromJS({}), action) => {
     case ADD_PROJECT:
       const { key, project } = action.payload;
       const newProject = fromJS({project});
-      const newState = state.set(key, newProject);
-      return newState;
+      return state.set(key, newProject);
 
     case UPDATE_PROJECT:
       const val = fromJS({key, project});
-      return state.mergeDeep(val);
+      return state.set(key, val);
 
     default:
       return state;

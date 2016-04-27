@@ -31,7 +31,7 @@ class ProjectItem extends Component {
     const { project, updateProject } = this.props;
     const newProject = project.set('assignee', value);
     updateProject(newProject.get('created'), newProject);
-    // this.setState({assignee: value});
+    this.setState({assignee: value});
   }
 
   setStatus = (event, index, value) => {
@@ -78,6 +78,7 @@ class ProjectItem extends Component {
 
   render () {
     const { project } = this.props;
+    console.debug(project);
     const thisProject = project.get('project');
     return (
       <TableRow>
