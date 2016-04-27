@@ -30,7 +30,7 @@ class ProjectItem extends Component {
   setAssignee = (event, index, value) => {
     const { project, updateProject } = this.props;
     const newProject = project.set('assignee', value);
-    updateProject(newProject);
+    updateProject(newProject.get('created'), newProject);
     // this.setState({assignee: value});
   }
 
@@ -78,34 +78,35 @@ class ProjectItem extends Component {
 
   render () {
     const { project } = this.props;
+    const thisProject = project.get('project');
     return (
       <TableRow>
         <TableRowColumn>
           <TextField
-            defaultValue={project.get('project')}
+            defaultValue={thisProject.get('project')}
           />
         </TableRowColumn>
         <TableRowColumn style={{width: '110px'}}>
           <TextField
-            defaultValue={project.get('duration')}
+            defaultValue={thisProject.get('duration')}
             onEnterKeyDown={this.setDuration}
             onBlur={this.setDuration} />
         </TableRowColumn>
         <TableRowColumn>
           <DatePicker
-            defaultValue={project.get('begin')}
+            defaultValue={thisProject.get('begin')}
             onChange={this.setBeginDate}
             autoOk />
         </TableRowColumn>
         <TableRowColumn>
           <DatePicker
-            defaultValue={project.get('end')}
+            defaultValue={thisProject.get('end')}
             onChange={this.setEndDate}
             autoOk />
         </TableRowColumn>
         <TableRowColumn>
           <SelectField
-            value={project.get('assignee')}
+            value={thisProject.get('assignee')}
             onChange={this.setAssignee}>
             {
               map(employeeNames, (item, index) => {
@@ -121,7 +122,7 @@ class ProjectItem extends Component {
         </TableRowColumn>
         <TableRowColumn>
           <SelectField
-            value={project.get('status')}
+            value={thisProject.get('status')}
             onChange={this.setStatus}>
             {
               map(statusTypes, (item, index) => {
@@ -138,7 +139,7 @@ class ProjectItem extends Component {
         <TableRowColumn>
           <div>
             <Slider step={0.05}
-              value={project.get('completeness')}
+              value={thisProject.get('completeness')}
               onChange={this.setCompleteness}/>
           </div>
         </TableRowColumn>

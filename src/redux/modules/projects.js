@@ -1,14 +1,11 @@
 import { fromJS } from 'immutable';
-import Action from '../action';
 
 /**
  * Enums for action types
  * @type {Object}
  */
-export const type = {
-  ADD_PROJECT: 'ADD_PROJECT',
-  UPDATE_PROJECT: 'UPDATE_PROJECT'
-};
+const ADD_PROJECT = 'ADD_PROJECT';
+const UPDATE_PROJECT = 'UPDATE_PROJECT';
 
 export const initialProjects = [
   {
@@ -60,33 +57,38 @@ export const getNewProject = (millis) => {
  * Action to add data to the state
  * @param  {[data]} data The data to add
  */
-export const addProject = (data) => {
-  return new Action(
-    type.ADD_PROJECT,
-    data
-  ).toObject();
-};
+export const addProject = (key, project) => ({
+  type: ADD_PROJECT,
+  payload: {
+    key,
+    project
+  }
+});
 
-export const updateProject = (data) => {
-  return new Action(
-    type.UPDATE_PROJECT,
+export const updateProject = (key, data) => ({
+  type: UPDATE_PROJECT,
+  payload: {
+    key,
     data
-  ).toObject();
-};
+  }
+});
 
 /**
  * Reducer for handling data actions
  * @param  {[type]} state  [description]
  * @param  {[type]} action [description]
  */
-const projectReducer = (state = fromJS([]), action) => {
+const projectReducer = (state = fromJS({}), action) => {
   switch (action.type) {
-    case type.ADD_PROJECT:
-      console.debug(action.payload);
-      return state.push(fromJS(action.payload));
+    case ADD_PROJECT:
+      const { key, project } = action.payload;
+      const newProject = fromJS({project});
+      const newState = state.set(key, newProject);
+      return newState;
 
-    case type.UPDATE_PROJECT:
-      return state.merge(fromJS(action.payload));
+    case UPDATE_PROJECT:
+      const val = fromJS({key, project});
+      return state.mergeDeep(val);
 
     default:
       return state;

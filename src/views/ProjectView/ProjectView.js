@@ -33,9 +33,8 @@ class ProjectView extends Component {
 
   componentWillMount () {
     const { addProject } = this.props;
-    console.debug(initialProjects);
     initialProjects.forEach((project) => {
-      addProject(project);
+      addProject(project.created, project);
     });
   }
 
@@ -56,7 +55,6 @@ class ProjectView extends Component {
 
   getSortedProjects () {
     const { projects } = this.props;
-    console.debug(projects);
     const { sort } = this.state;
     let sortedProjects = projects.sortBy(
       (val, key) => {
@@ -69,7 +67,7 @@ class ProjectView extends Component {
     const { addProject } = this.props;
     const millis = moment().valueOf();
     const newProject = getNewProject(millis);
-    addProject(newProject);
+    addProject(millis, newProject);
   }
 
   render () {
@@ -84,7 +82,6 @@ class ProjectView extends Component {
       {key: 'completeness', pretty: 'Completeness'}
     ];
     const sortedProjects = this.getSortedProjects();
-
     const styles = {
       columnHeader: {
         cursor: 'pointer',
@@ -162,10 +159,11 @@ class ProjectView extends Component {
           </TableHeader>
           <TableBody>
           {
-            sortedProjects.map((project) => {
+            sortedProjects.map((project, key) => {
+              console.debug(project, key);
               return (
                 <ProjectItem
-                  key={project.get('created')}
+                  key={key}
                   project={project}
                 />
               );
