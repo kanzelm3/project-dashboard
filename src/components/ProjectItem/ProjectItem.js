@@ -20,6 +20,7 @@ class ProjectItem extends Component {
 
   constructor (props) {
     super(props);
+    const { project } = props;
     this.setTitle = this.setTitle.bind(this);
     this.setAssignee = this.setAssignee.bind(this);
     this.setStatus = this.setStatus.bind(this);
@@ -29,7 +30,8 @@ class ProjectItem extends Component {
     this.setDuration = this.setDuration.bind(this);
     this.updateProjectValue = this.updateProjectValue.bind(this);
     this.state = {
-      completeness: props.project.get('completeness')
+      completeness: project.get('completeness'),
+      duration: project.get('duration')
     };
   }
 
@@ -66,6 +68,9 @@ class ProjectItem extends Component {
       'begin': beginString,
       'duration': difference
     });
+    this.setState({
+      duration: difference
+    });
   };
 
   setEndDate = (event, value) => {
@@ -77,6 +82,9 @@ class ProjectItem extends Component {
     this.updateProjectValue({
       'end': endString,
       'duration': difference
+    });
+    this.setState({
+      duration: difference
     });
   }
 
@@ -112,6 +120,13 @@ class ProjectItem extends Component {
     });
   }
 
+  updateDuration = (event) => {
+    const { value } = event.target;
+    this.setState({
+      duration: value
+    });
+  }
+
   updateProjectValue = (obj) => {
     const { project, onUpdate } = this.props;
     const newProject = project.merge(fromJS(obj));
@@ -120,6 +135,8 @@ class ProjectItem extends Component {
 
   render () {
     const { project } = this.props;
+    const endDate = new Date(project.get('end'));
+    const beginDate = new Date(project.get('begin'));
     return (
       <TableRow>
         <TableRowColumn>
@@ -130,20 +147,22 @@ class ProjectItem extends Component {
         </TableRowColumn>
         <TableRowColumn style={{width: '110px'}}>
           <TextField
-            defaultValue={project.get('duration')}
+            value={this.state.duration}
+            onChange={this.updateDuration}
             onEnterKeyDown={this.setDuration}
             onBlur={this.setDuration} />
         </TableRowColumn>
         <TableRowColumn style={{width: '200px'}}>
           <DatePicker
-            defaultValue={project.get('begin')}
+            value={beginDate}
             onChange={this.setBeginDate}
             autoOk />
         </TableRowColumn>
         <TableRowColumn style={{width: '200px'}}>
           <DatePicker
-            defaultValue={project.get('end')}
+            value={endDate}
             onChange={this.setEndDate}
+            minDate={beginDate}
             autoOk />
         </TableRowColumn>
         <TableRowColumn>

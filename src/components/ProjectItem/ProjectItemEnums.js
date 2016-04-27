@@ -9,6 +9,7 @@ export const employeeNames = [
 ];
 
 export const statusTypes = [
+  'New',
   'In Work',
   'Overdue',
   'Complete'
