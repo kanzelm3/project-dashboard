@@ -22,7 +22,7 @@ class ProjectView extends Component {
   constructor (props) {
     super(props);
     this.newProject = this.newProject.bind(this);
-    this.handleClick = this.handleClick.bind(this);
+    this.handleSortClick = this.handleSortClick.bind(this);
     this.state = {
       sort: {
         key: 'end',
@@ -41,11 +41,10 @@ class ProjectView extends Component {
   static propTypes = {
     addProject: PropTypes.func,
     updateProject: PropTypes.func,
-    sortAscending: PropTypes.func,
     projects: PropTypes.object
   }
 
-  handleClick = (key) => (evt) => {
+  handleSortClick = (key) => (evt) => {
     this.setState({
       sort: {
         key,
@@ -59,9 +58,10 @@ class ProjectView extends Component {
     const { sort } = this.state;
     const { key } = sort;
     let sortedProjects = projects.sortBy((project) => {
-      return project.getIn(key);
+      return project.get(key);
     });
-    return sort.ascending? sortedProjects : sortedProjects.reverse();
+    const p = sort.ascending? sortedProjects : sortedProjects.reverse();
+    return p;
   }
 
   newProject () {
@@ -81,6 +81,16 @@ class ProjectView extends Component {
       columnHeader: {
         cursor: 'pointer',
         padding: '0'
+      },
+      columnHeaderDuration: {
+        cursor: 'pointer',
+        padding: '0',
+        width: '110px'
+      },
+      columnHeaderDate: {
+        cursor: 'pointer',
+        padding: '0',
+        width: '200px'
       },
       columnLabel: {
         padding: '22px'
@@ -108,51 +118,49 @@ class ProjectView extends Component {
               <TableHeaderColumn style={styles.columnHeader}>
                 <div
                   style={styles.columnLabel}
-                  onClick={this.handleClick('project')}>
+                  onClick={this.handleSortClick('project')}>
                     Project
                 </div>
               </TableHeaderColumn>
-              <TableHeaderColumn style={Object.assign(
-                    {width: '110px'},
-                    styles.columnHeader)}>
+              <TableHeaderColumn style={styles.columnHeaderDuration}>
                 <div
                   style={styles.columnLabel}
-                  onClick={this.handleClick('project')}>
+                  onClick={this.handleSortClick('duration')}>
                     Duration
                 </div>
               </TableHeaderColumn>
-              <TableHeaderColumn style={styles.columnHeader}>
+              <TableHeaderColumn style={styles.columnHeaderDate}>
                 <div
                   style={styles.columnLabel}
-                  onClick={this.handleClick('begin')}>
+                  onClick={this.handleSortClick('begin')}>
                     Begin Date
                 </div>
               </TableHeaderColumn>
-              <TableHeaderColumn style={styles.columnHeader}>
+              <TableHeaderColumn style={styles.columnHeaderDate}>
                 <div
                   style={styles.columnLabel}
-                  onClick={this.handleClick('end')}>
+                  onClick={this.handleSortClick('end')}>
                     End Date
                 </div>
               </TableHeaderColumn>
               <TableHeaderColumn style={styles.columnHeader}>
                 <div
                   style={styles.columnLabel}
-                  onClick={this.handleClick('assignee')}>
+                  onClick={this.handleSortClick('assignee')}>
                     Assignee
                 </div>
               </TableHeaderColumn>
               <TableHeaderColumn style={styles.columnHeader}>
                 <div
                   style={styles.columnLabel}
-                  onClick={this.handleClick('status')}>
+                  onClick={this.handleSortClick('status')}>
                     Status
                 </div>
               </TableHeaderColumn>
               <TableHeaderColumn style={styles.columnHeader}>
                 <div
                   style={styles.columnLabel}
-                  onClick={this.handleClick('completeness')}>
+                  onClick={this.handleSortClick('completeness')}>
                     Completeness
                 </div>
               </TableHeaderColumn>
@@ -160,10 +168,10 @@ class ProjectView extends Component {
           </TableHeader>
           <TableBody>
           {
-            sortedProjects.toList().map((project, key) => {
+            sortedProjects.toList().map((project) => {
               return (
                 <ProjectItem
-                  key={key}
+                  key={project.get('id')}
                   project={project}
                   onUpdate={this.onProjectUpdate}
                 />

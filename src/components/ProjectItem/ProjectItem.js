@@ -1,4 +1,5 @@
 import React, { PropTypes, Component } from 'react';
+import { fromJS } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProject } from '../../redux/modules/projects';
@@ -17,8 +18,8 @@ import { employeeNames, statusTypes } from './ProjectItemEnums';
 
 class ProjectItem extends Component {
 
-  constructor () {
-    super();
+  constructor (props) {
+    super(props);
     this.setTitle = this.setTitle.bind(this);
     this.setAssignee = this.setAssignee.bind(this);
     this.setStatus = this.setStatus.bind(this);
@@ -27,6 +28,9 @@ class ProjectItem extends Component {
     this.setCompleteness = this.setCompleteness.bind(this);
     this.setDuration = this.setDuration.bind(this);
     this.updateProjectValue = this.updateProjectValue.bind(this);
+    this.state = {
+      completeness: props.project.get('completeness')
+    };
   }
 
   static propTypes = {
@@ -37,18 +41,19 @@ class ProjectItem extends Component {
 
   setTitle = (event) => {
     const { value } = event.target;
-    this.updateProjectValue('project', value);
+    this.updateProjectValue({'project': value});
   }
 
   setAssignee = (event, index, value) => {
-    this.updateProjectValue('assignee', value);
+    this.updateProjectValue({'assignee': value});
   }
 
   setStatus = (event, index, value) => {
-    this.updateProjectValue('status', value);
+    const obj = {'status': value};
     if (value === 'Complete') {
-      this.updateProjectValue('completeness', 1);
+      obj.completeness = 1;
     }
+    this.updateProjectValue(obj);
   }
 
   setBeginDate = (event, value) => {
@@ -57,9 +62,10 @@ class ProjectItem extends Component {
     const beginString = newBeginDate.format('MM/DD/YYYY');
     const endDate = moment(project.get('end'), 'MM-DD-YYYY');
     const difference = endDate.diff(newBeginDate, 'days');
-    console.debug(difference);
-    this.updateProjectValue('begin', beginString);
-    this.updateProjectValue('duration', difference);
+    this.updateProjectValue({
+      'begin': beginString,
+      'duration': difference
+    });
   };
 
   setEndDate = (event, value) => {
@@ -68,36 +74,47 @@ class ProjectItem extends Component {
     const endString = newEndDate.format('MM/DD/YYYY');
     const begin = moment(project.get('begin'), 'MM-DD-YYYY');
     const difference = newEndDate.diff(begin, 'days');
-    this.updateProjectValue('end', endString);
-    this.updateProjectValue('duration', difference);
+    this.updateProjectValue({
+      'end': endString,
+      'duration': difference
+    });
   }
 
-  setCompleteness = (event, value) => {
+  updateCompleteness = (event, value) => {
+    this.setState({
+      completeness: value
+    });
+  }
+
+  setCompleteness = (event) => {
+    const { completeness } = this.state;
+    const obj = {'completeness': completeness};
     const { project } = this.props;
-    this.updateProjectValue('completeness', value);
-    if (value === 1) {
-      this.updateProjectValue('status', 'Complete');
+    if (completeness === 1) {
+      obj.status = 'Complete';
     } else {
       if (project.get('status') === 'Complete') {
-        this.updateProjectValue('status', 'In Work');
+        obj.status = 'In Work';
       }
     }
+    this.updateProjectValue(obj);
   }
 
   setDuration = (event) => {
     const { project } = this.props;
     const { value } = event.target;
-    console.debug(value);
     const begin = moment(project.get('begin'), 'MM-DD-YYYY');
     const end = begin.add(value, 'd');
     const endString = end.format('MM/DD/YYYY');
-    this.updateProjectValue('duration', value);
-    this.updateProjectValue('end', endString);
+    this.updateProjectValue({
+      'end': endString,
+      'duration': value
+    });
   }
 
-  updateProjectValue = (key, value) => {
+  updateProjectValue = (obj) => {
     const { project, onUpdate } = this.props;
-    const newProject = project.set(key, value);
+    const newProject = project.merge(fromJS(obj));
     onUpdate(newProject);
   }
 
@@ -117,13 +134,13 @@ class ProjectItem extends Component {
             onEnterKeyDown={this.setDuration}
             onBlur={this.setDuration} />
         </TableRowColumn>
-        <TableRowColumn>
+        <TableRowColumn style={{width: '200px'}}>
           <DatePicker
             defaultValue={project.get('begin')}
             onChange={this.setBeginDate}
             autoOk />
         </TableRowColumn>
-        <TableRowColumn>
+        <TableRowColumn style={{width: '200px'}}>
           <DatePicker
             defaultValue={project.get('end')}
             onChange={this.setEndDate}
@@ -165,6 +182,7 @@ class ProjectItem extends Component {
           <div>
             <Slider step={0.05}
               value={project.get('completeness')}
+              onChange={this.updateCompleteness}
               onDragStop={this.setCompleteness}/>
           </div>
         </TableRowColumn>

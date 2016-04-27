@@ -10,17 +10,17 @@ const UPDATE_PROJECT = 'UPDATE_PROJECT';
 export const initialProjects = [
   {
     id: 101,
-    project: 'LPWS Refactor',
+    project: 'A',
     begin: '03/22/2016',
     end: '04/28/2016',
     assignee: 'Paddy Fotovich',
-    duration: 15,
+    duration: 10,
     status: 'In Work',
     completeness: 0.90
   },
   {
     id: 102,
-    project: 'End To End Sim Wrapper',
+    project: 'B',
     begin: '01/01/2016',
     end: '01/15/2016',
     assignee: 'Kevin Kanzelmeyer',
@@ -30,11 +30,11 @@ export const initialProjects = [
   },
   {
     id: 103,
-    project: 'LPWS Phase III Mods',
+    project: 'C',
     begin: '03/01/2016',
     end: '04/22/2016',
     assignee: 'Adam Redmon',
-    duration: 13,
+    duration: 5,
     status: 'In Work',
     completeness: 0.95
   }
