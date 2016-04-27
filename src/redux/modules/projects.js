@@ -1,5 +1,5 @@
-import { fromJS } from 'immutable';
-
+import { fromJS, Map } from 'immutable';
+import moment from 'moment';
 /**
  * Enums for action types
  * @type {Object}
@@ -9,7 +9,7 @@ const UPDATE_PROJECT = 'UPDATE_PROJECT';
 
 export const initialProjects = [
   {
-    created: 1,
+    id: 101,
     project: 'LPWS Refactor',
     begin: '03/22/2016',
     end: '04/28/2016',
@@ -19,7 +19,7 @@ export const initialProjects = [
     completeness: 0.90
   },
   {
-    created: 2,
+    id: 102,
     project: 'End To End Sim Wrapper',
     begin: '01/01/2016',
     end: '01/15/2016',
@@ -29,7 +29,7 @@ export const initialProjects = [
     completeness: 0.60
   },
   {
-    created: 3,
+    id: 103,
     project: 'LPWS Phase III Mods',
     begin: '03/01/2016',
     end: '04/22/2016',
@@ -40,9 +40,10 @@ export const initialProjects = [
   }
 ];
 
-export const getNewProject = (millis) => {
+export const getNewProject = () => {
+  const millis = moment().valueOf();
   return {
-    created: millis,
+    id: millis,
     project: 'New Project',
     begin: '01/01/2016',
     end: '01/01/2016',
@@ -57,37 +58,41 @@ export const getNewProject = (millis) => {
  * Action to add data to the state
  * @param  {[data]} data The data to add
  */
-export const addProject = (key, project) => ({
-  type: ADD_PROJECT,
+export const addProject = (project) => {
+  return ({
+    type: ADD_PROJECT,
+    payload: {
+      project
+    }
+  });
+};
+
+export const updateProject = (project) => ({
+  type: UPDATE_PROJECT,
   payload: {
-    key,
     project
   }
 });
 
-export const updateProject = (key, data) => ({
-  type: UPDATE_PROJECT,
-  payload: {
-    key,
-    data
-  }
-});
+const addProjectHandler = (state, { payload: { project } }) => {
+  return state.set(project.id, fromJS(project));
+};
 
+const updateProjectHandler = (state, { payload: { project } }) => {
+  return state.set(project.get('id'), project);
+};
 /**
  * Reducer for handling data actions
  * @param  {[type]} state  [description]
  * @param  {[type]} action [description]
  */
-const projectReducer = (state = fromJS({}), action) => {
+const projectReducer = (state = Map(), action) => {
   switch (action.type) {
     case ADD_PROJECT:
-      const { key, project } = action.payload;
-      const newProject = fromJS({project});
-      return state.set(key, newProject);
+      return addProjectHandler(state, action);
 
     case UPDATE_PROJECT:
-      const val = fromJS({key, project});
-      return state.set(key, val);
+      return updateProjectHandler(state, action);
 
     default:
       return state;

@@ -19,95 +19,119 @@ class ProjectItem extends Component {
 
   constructor () {
     super();
+    this.setTitle = this.setTitle.bind(this);
     this.setAssignee = this.setAssignee.bind(this);
+    this.setStatus = this.setStatus.bind(this);
+    this.setBeginDate = this.setBeginDate.bind(this);
+    this.setEndDate = this.setEndDate.bind(this);
+    this.setCompleteness = this.setCompleteness.bind(this);
+    this.setDuration = this.setDuration.bind(this);
+    this.updateProjectValue = this.updateProjectValue.bind(this);
   }
 
   static propTypes = {
     project: PropTypes.object,
-    updateProject: PropTypes.func
+    updateProject: PropTypes.func,
+    onUpdate: PropTypes.func
+  }
+
+  setTitle = (event) => {
+    const { value } = event.target;
+    this.updateProjectValue('project', value);
   }
 
   setAssignee = (event, index, value) => {
-    const { project, updateProject } = this.props;
-    const newProject = project.set('assignee', value);
-    updateProject(newProject.get('created'), newProject);
-    this.setState({assignee: value});
+    this.updateProjectValue('assignee', value);
   }
 
   setStatus = (event, index, value) => {
-    this.setState({status: value});
+    this.updateProjectValue('status', value);
     if (value === 'Complete') {
-      this.setState({completeness: 1});
+      this.updateProjectValue('completeness', 1);
     }
   }
 
   setBeginDate = (event, value) => {
+    const { project } = this.props;
     const newBeginDate = moment(value);
     const beginString = newBeginDate.format('MM/DD/YYYY');
-    const endDate = moment(this.state.end, 'MM-DD-YYYY');
+    const endDate = moment(project.get('end'), 'MM-DD-YYYY');
     const difference = endDate.diff(newBeginDate, 'days');
-    this.setState({
-      begin: beginString,
-      duration: difference});
+    console.debug(difference);
+    this.updateProjectValue('begin', beginString);
+    this.updateProjectValue('duration', difference);
   };
 
   setEndDate = (event, value) => {
+    const { project } = this.props;
     const newEndDate = moment(value);
     const endString = newEndDate.format('MM/DD/YYYY');
-    const begin = moment(this.state.begin, 'MM-DD-YYYY');
+    const begin = moment(project.get('begin'), 'MM-DD-YYYY');
     const difference = newEndDate.diff(begin, 'days');
-    this.setState({
-      end: endString,
-      duration: difference});
+    this.updateProjectValue('end', endString);
+    this.updateProjectValue('duration', difference);
   }
 
   setCompleteness = (event, value) => {
-    this.setState({completeness: value});
+    const { project } = this.props;
+    this.updateProjectValue('completeness', value);
     if (value === 1) {
-      this.setState({status: 'Complete'});
+      this.updateProjectValue('status', 'Complete');
     } else {
-      if (this.state.status === 'Complete') {
-        this.setState({status: 'In Work'});
+      if (project.get('status') === 'Complete') {
+        this.updateProjectValue('status', 'In Work');
       }
     }
   }
 
   setDuration = (event) => {
-    console.debug(event.target.value);
+    const { project } = this.props;
+    const { value } = event.target;
+    console.debug(value);
+    const begin = moment(project.get('begin'), 'MM-DD-YYYY');
+    const end = begin.add(value, 'd');
+    const endString = end.format('MM/DD/YYYY');
+    this.updateProjectValue('duration', value);
+    this.updateProjectValue('end', endString);
+  }
+
+  updateProjectValue = (key, value) => {
+    const { project, onUpdate } = this.props;
+    const newProject = project.set(key, value);
+    onUpdate(newProject);
   }
 
   render () {
     const { project } = this.props;
-    console.debug(project);
-    const thisProject = project.get('project');
     return (
       <TableRow>
         <TableRowColumn>
           <TextField
-            defaultValue={thisProject.get('project')}
+            defaultValue={project.get('project')}
+            onBlur={this.setTitle}
           />
         </TableRowColumn>
         <TableRowColumn style={{width: '110px'}}>
           <TextField
-            defaultValue={thisProject.get('duration')}
+            defaultValue={project.get('duration')}
             onEnterKeyDown={this.setDuration}
             onBlur={this.setDuration} />
         </TableRowColumn>
         <TableRowColumn>
           <DatePicker
-            defaultValue={thisProject.get('begin')}
+            defaultValue={project.get('begin')}
             onChange={this.setBeginDate}
             autoOk />
         </TableRowColumn>
         <TableRowColumn>
           <DatePicker
-            defaultValue={thisProject.get('end')}
+            defaultValue={project.get('end')}
             onChange={this.setEndDate}
             autoOk />
         </TableRowColumn>
         <TableRowColumn>
           <SelectField
-            value={thisProject.get('assignee')}
+            value={project.get('assignee')}
             onChange={this.setAssignee}>
             {
               map(employeeNames, (item, index) => {
@@ -123,7 +147,7 @@ class ProjectItem extends Component {
         </TableRowColumn>
         <TableRowColumn>
           <SelectField
-            value={thisProject.get('status')}
+            value={project.get('status')}
             onChange={this.setStatus}>
             {
               map(statusTypes, (item, index) => {
@@ -140,8 +164,8 @@ class ProjectItem extends Component {
         <TableRowColumn>
           <div>
             <Slider step={0.05}
-              value={thisProject.get('completeness')}
-              onChange={this.setCompleteness}/>
+              value={project.get('completeness')}
+              onDragStop={this.setCompleteness}/>
           </div>
         </TableRowColumn>
       </TableRow>

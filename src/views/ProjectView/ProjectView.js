@@ -2,9 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { addProject,
+         updateProject,
          getNewProject,
          initialProjects } from '../../redux/modules/projects';
-import moment from 'moment';
 // material ui
 import ProjectItem from 'components/ProjectItem/ProjectItem';
 import Table from 'material-ui/lib/table/table';
@@ -14,8 +14,8 @@ import TableHeader from 'material-ui/lib/table/table-header';
 import TableBody from 'material-ui/lib/table/table-body';
 import FloatingActionButton from 'material-ui/lib/floating-action-button';
 import ContentAdd from 'material-ui/lib/svg-icons/content/add';
-import NavigationArrowDownward from 'material-ui/lib/svg-icons/navigation/arrow-downward';
-import NavigationArrowUpward from 'material-ui/lib/svg-icons/navigation/arrow-upward';
+// import NavigationArrowDownward from 'material-ui/lib/svg-icons/navigation/arrow-downward';
+// import NavigationArrowUpward from 'material-ui/lib/svg-icons/navigation/arrow-upward';
 
 class ProjectView extends Component {
 
@@ -34,12 +34,13 @@ class ProjectView extends Component {
   componentWillMount () {
     const { addProject } = this.props;
     initialProjects.forEach((project) => {
-      addProject(project.created, project);
+      addProject(project);
     });
   }
 
   static propTypes = {
     addProject: PropTypes.func,
+    updateProject: PropTypes.func,
     sortAscending: PropTypes.func,
     projects: PropTypes.object
   }
@@ -56,31 +57,25 @@ class ProjectView extends Component {
   getSortedProjects () {
     const { projects } = this.props;
     const { sort } = this.state;
-    let sortedProjects = projects.sortBy(
-      (val, key) => {
-        return val.get(sort.key);
-      });
+    const { key } = sort;
+    let sortedProjects = projects.sortBy((project) => {
+      return project.getIn(key);
+    });
     return sort.ascending? sortedProjects : sortedProjects.reverse();
   }
 
   newProject () {
     const { addProject } = this.props;
-    const millis = moment().valueOf();
-    const newProject = getNewProject(millis);
-    addProject(millis, newProject);
+    const newProject = getNewProject();
+    addProject(newProject);
+  }
+
+  onProjectUpdate = (newProject) => {
+    const { updateProject } = this.props;
+    updateProject(newProject);
   }
 
   render () {
-    const { sort } = this.state;
-    const headers = [
-      {key: 'project', pretty: 'Project'},
-      {key: 'duration', pretty: 'Duration'},
-      {key: 'begin', pretty: 'Begin Date'},
-      {key: 'end', pretty: 'End Date'},
-      {key: 'assignee', pretty: 'Assginee'},
-      {key: 'status', pretty: 'Status'},
-      {key: 'completeness', pretty: 'Completeness'}
-    ];
     const sortedProjects = this.getSortedProjects();
     const styles = {
       columnHeader: {
@@ -110,59 +105,67 @@ class ProjectView extends Component {
         <Table>
           <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
             <TableRow>
-            {
-              headers.map((header, i) => {
-                let label;
-                let headerStyle;
-                if (sort.key === header.key) {
-                  label = (
-                    <div style={styles.label}>
-                      <span
-                        style={Object.assign(styles.active, styles.label)}>
-                        {header.pretty}
-                      </span>
-                      {sort.ascending
-                        ? <NavigationArrowDownward
-                          style={styles.icon}/>
-                        : <NavigationArrowUpward
-                          style={styles.icon}/>
-                      }
-                    </div>
-                  );
-                } else {
-                  label = <span style={styles.label}>{header.pretty}</span>;
-                }
-
-                if (header.key === 'duration') {
-                  headerStyle = Object.assign(
+              <TableHeaderColumn style={styles.columnHeader}>
+                <div
+                  style={styles.columnLabel}
+                  onClick={this.handleClick('project')}>
+                    Project
+                </div>
+              </TableHeaderColumn>
+              <TableHeaderColumn style={Object.assign(
                     {width: '110px'},
-                    styles.columnHeader);
-                } else {
-                  headerStyle = styles.columnHeader;
-                }
-                return (
-                  <TableHeaderColumn
-                    style={headerStyle}
-                    key={i}
-                  >
-                    <div
-                      style={styles.columnLabel}
-                      onClick={this.handleClick(header.key)}>
-                      {label}
-                    </div>
-                  </TableHeaderColumn>
-                );
-              })
-            }
+                    styles.columnHeader)}>
+                <div
+                  style={styles.columnLabel}
+                  onClick={this.handleClick('project')}>
+                    Duration
+                </div>
+              </TableHeaderColumn>
+              <TableHeaderColumn style={styles.columnHeader}>
+                <div
+                  style={styles.columnLabel}
+                  onClick={this.handleClick('begin')}>
+                    Begin Date
+                </div>
+              </TableHeaderColumn>
+              <TableHeaderColumn style={styles.columnHeader}>
+                <div
+                  style={styles.columnLabel}
+                  onClick={this.handleClick('end')}>
+                    End Date
+                </div>
+              </TableHeaderColumn>
+              <TableHeaderColumn style={styles.columnHeader}>
+                <div
+                  style={styles.columnLabel}
+                  onClick={this.handleClick('assignee')}>
+                    Assignee
+                </div>
+              </TableHeaderColumn>
+              <TableHeaderColumn style={styles.columnHeader}>
+                <div
+                  style={styles.columnLabel}
+                  onClick={this.handleClick('status')}>
+                    Status
+                </div>
+              </TableHeaderColumn>
+              <TableHeaderColumn style={styles.columnHeader}>
+                <div
+                  style={styles.columnLabel}
+                  onClick={this.handleClick('completeness')}>
+                    Completeness
+                </div>
+              </TableHeaderColumn>
             </TableRow>
           </TableHeader>
           <TableBody>
           {
-            sortedProjects.map((project, key) => {
+            sortedProjects.toList().map((project, key) => {
               return (
                 <ProjectItem
                   key={key}
                   project={project}
+                  onUpdate={this.onProjectUpdate}
                 />
               );
             })
@@ -187,7 +190,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  addProject
+  addProject,
+  updateProject
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
