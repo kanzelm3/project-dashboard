@@ -14,8 +14,8 @@ import TableHeader from 'material-ui/lib/table/table-header';
 import TableBody from 'material-ui/lib/table/table-body';
 import FloatingActionButton from 'material-ui/lib/floating-action-button';
 import ContentAdd from 'material-ui/lib/svg-icons/content/add';
-// import NavigationArrowDownward from 'material-ui/lib/svg-icons/navigation/arrow-downward';
-// import NavigationArrowUpward from 'material-ui/lib/svg-icons/navigation/arrow-upward';
+import NavigationArrowDownward from 'material-ui/lib/svg-icons/navigation/arrow-downward';
+import NavigationArrowUpward from 'material-ui/lib/svg-icons/navigation/arrow-upward';
 
 class ProjectView extends Component {
 
@@ -90,7 +90,7 @@ class ProjectView extends Component {
       columnHeaderDate: {
         cursor: 'pointer',
         padding: '0',
-        width: '200px'
+        width: '175px'
       },
       columnLabel: {
         padding: '22px'
@@ -110,6 +110,33 @@ class ProjectView extends Component {
         verticalAlign: 'middle'
       }
     };
+
+    const sortIcon = (key) => {
+      const { sort } = this.state;
+      let icon;
+      if (key === sort.key) {
+        icon = sort.ascending
+          ? <NavigationArrowDownward
+            style={styles.icon}/>
+          : <NavigationArrowUpward
+            style={styles.icon}/>;
+      } else {
+        icon = <div></div>;
+      }
+      return icon;
+    };
+
+    const labelStyle = (key) => {
+      const { sort } = this.state;
+      let style;
+      if (key === sort.key) {
+        style = Object.assign(styles.active, styles.label);
+      } else {
+        style = styles.label;
+      }
+      return style;
+    };
+
     return (
       <div>
         <Table>
@@ -119,49 +146,56 @@ class ProjectView extends Component {
                 <div
                   style={styles.columnLabel}
                   onClick={this.handleSortClick('project')}>
-                    Project
+                  <span style={labelStyle('project')}>Project</span>
+                  {sortIcon('project')}
                 </div>
               </TableHeaderColumn>
               <TableHeaderColumn style={styles.columnHeaderDuration}>
                 <div
                   style={styles.columnLabel}
                   onClick={this.handleSortClick('duration')}>
-                    Duration
+                  <span style={labelStyle('duration')}>Duration</span>
+                  {sortIcon('duration')}
                 </div>
               </TableHeaderColumn>
               <TableHeaderColumn style={styles.columnHeaderDate}>
                 <div
                   style={styles.columnLabel}
                   onClick={this.handleSortClick('begin')}>
-                    Begin Date
+                  <span style={labelStyle('begin')}>Begin Date</span>
+                  {sortIcon('begin')}
                 </div>
               </TableHeaderColumn>
               <TableHeaderColumn style={styles.columnHeaderDate}>
                 <div
                   style={styles.columnLabel}
                   onClick={this.handleSortClick('end')}>
-                    End Date
+                  <span style={labelStyle('end')}>End Date</span>
+                  {sortIcon('end')}
                 </div>
               </TableHeaderColumn>
               <TableHeaderColumn style={styles.columnHeader}>
                 <div
                   style={styles.columnLabel}
                   onClick={this.handleSortClick('assignee')}>
-                    Assignee
+                  <span style={labelStyle('assignee')}>Assignee</span>
+                  {sortIcon('assignee')}
                 </div>
               </TableHeaderColumn>
               <TableHeaderColumn style={styles.columnHeader}>
                 <div
                   style={styles.columnLabel}
                   onClick={this.handleSortClick('status')}>
-                    Status
+                  <span style={labelStyle('status')}>Status</span>
+                  {sortIcon('status')}
                 </div>
               </TableHeaderColumn>
               <TableHeaderColumn style={styles.columnHeader}>
                 <div
                   style={styles.columnLabel}
                   onClick={this.handleSortClick('completeness')}>
-                    Completeness
+                  <span style={labelStyle('completeness')}>Completeness</span>
+                  {sortIcon('completeness')}
                 </div>
               </TableHeaderColumn>
             </TableRow>
@@ -182,8 +216,8 @@ class ProjectView extends Component {
         </Table>
         <FloatingActionButton style={{
           position: 'fixed',
-          right: '3%',
-          bottom: '5%'
+          right: '30px',
+          bottom: '30px'
         }}
           onClick={this.newProject}>
           <ContentAdd />

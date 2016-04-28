@@ -152,13 +152,13 @@ class ProjectItem extends Component {
             onEnterKeyDown={this.setDuration}
             onBlur={this.setDuration} />
         </TableRowColumn>
-        <TableRowColumn style={{width: '200px'}}>
+        <TableRowColumn style={{width: '175px'}}>
           <DatePicker
             value={beginDate}
             onChange={this.setBeginDate}
             autoOk />
         </TableRowColumn>
-        <TableRowColumn style={{width: '200px'}}>
+        <TableRowColumn style={{width: '175px'}}>
           <DatePicker
             value={endDate}
             onChange={this.setEndDate}

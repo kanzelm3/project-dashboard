@@ -42,14 +42,19 @@ export const initialProjects = [
 
 export const getNewProject = () => {
   const millis = moment().valueOf();
+  const duration = 1;
+  const now = moment();
+  const nowString = now.format('MM/DD/YYYY');
+  const tomorrow = now.add(duration, 'd');
+  const tomorrowString = tomorrow.format('MM/DD/YYYY');
   return {
     id: millis,
     project: 'New Project',
-    begin: '01/01/2016',
-    end: '01/01/2016',
+    begin: nowString,
+    end: tomorrowString,
     assignee: 'Unassigned',
-    duration: 0,
-    status: 'In Work',
+    duration,
+    status: 'New',
     completeness: 0.0
   };
 };
