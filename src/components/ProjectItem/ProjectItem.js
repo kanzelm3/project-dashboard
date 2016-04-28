@@ -98,12 +98,18 @@ class ProjectItem extends Component {
     const { completeness } = this.state;
     const obj = {'completeness': completeness};
     const { project } = this.props;
+    const today = moment();
+    const end = moment(project.get('end'), 'MM-DD-YYYY');
+    const diff = today.diff(end, 'd');
+
     if (completeness === 1) {
       obj.status = 'Complete';
+    } else if (diff > 0) {
+      obj.status = 'Overdue';
+    } else if (completeness === 0) {
+      obj.status = 'New';
     } else {
-      if (project.get('status') === 'Complete') {
-        obj.status = 'In Work';
-      }
+      obj.status = 'In Work';
     }
     this.updateProjectValue(obj);
   }
