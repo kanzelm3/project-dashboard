@@ -80,7 +80,7 @@ export const updateProject = (project) => ({
 });
 
 const addProjectHandler = (state, { payload: { project } }) => {
-  return state.set(project.id, fromJS(project));
+  return state.set(project.get('id'), project);
 };
 
 const updateProjectHandler = (state, { payload: { project } }) => {
