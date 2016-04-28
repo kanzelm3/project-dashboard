@@ -1,4 +1,4 @@
-import { fromJS, Map } from 'immutable';
+import { Map } from 'immutable';
 import moment from 'moment';
 /**
  * Enums for action types

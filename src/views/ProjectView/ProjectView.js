@@ -92,7 +92,6 @@ class ProjectView extends Component {
   saveNewProject () {
     const { addProject } = this.props;
     const { newProject } = this.state;
-    console.debug(newProject);
     addProject(newProject);
     this.setState({
       open: false
