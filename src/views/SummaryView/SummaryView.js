@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import SummaryWidget from 'components/SummaryWidget';
 import getMetrics from './SummaryMetrics';
 import { bindActionCreators } from 'redux';
-import { addMetrics } from 'redux/modules/track-ids';
+// import { addMetrics } from 'redux/modules/track-ids';
 
 export class SummaryView extends Component {
   constructor (props) {
@@ -49,7 +49,7 @@ export class SummaryView extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  addMetrics
+  // addMetrics
 }, dispatch);
 
 const mapStateToProps = (state) => ({

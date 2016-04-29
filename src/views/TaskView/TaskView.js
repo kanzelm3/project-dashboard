@@ -2,12 +2,12 @@ import React, { Component, PropTypes } from 'react';
 import { fromJS } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addProject,
-         updateProject,
-         getNewProject,
-         initialProjects } from '../../redux/modules/projects';
-import ProjectItem from 'components/ProjectItem/ProjectItem';
-import NewProject from 'components/NewProject/NewProject';
+import { addTask,
+         updateTask,
+         getNewTask,
+         initialTasks } from '../../redux/modules/task';
+import TaskItem from 'components/TaskItem/TaskItem';
+import NewTask from 'components/NewTask/NewTask';
 // material ui
 import Dialog from 'material-ui/lib/dialog';
 import Table from 'material-ui/lib/table/table';
@@ -21,34 +21,34 @@ import ContentAdd from 'material-ui/lib/svg-icons/content/add';
 import NavigationArrowDownward from 'material-ui/lib/svg-icons/navigation/arrow-downward';
 import NavigationArrowUpward from 'material-ui/lib/svg-icons/navigation/arrow-upward';
 
-class ProjectView extends Component {
+class TaskView extends Component {
 
   constructor (props) {
     super(props);
     this.handleSortClick = this.handleSortClick.bind(this);
-    this.createNewProject = this.createNewProject.bind(this);
-    this.saveNewProject = this.saveNewProject.bind(this);
+    this.createNewTask = this.createNewTask.bind(this);
+    this.saveNewTask = this.saveNewTask.bind(this);
     this.state = {
       sort: {
         key: 'end',
         ascending: true
       },
       open: false,
-      newProject: fromJS(getNewProject())
+      newTask: fromJS(getNewTask())
     };
   }
 
   componentWillMount () {
-    const { addProject } = this.props;
-    initialProjects.forEach((project) => {
-      addProject(fromJS(project));
+    const { addTask } = this.props;
+    initialTasks.forEach((task) => {
+      addTask(fromJS(task));
     });
   }
 
   static propTypes = {
-    addProject: PropTypes.func,
-    updateProject: PropTypes.func,
-    projects: PropTypes.object
+    addTask: PropTypes.func,
+    updateTask: PropTypes.func,
+    tasks: PropTypes.object
   }
 
   handleSortClick = (key) => (evt) => {
@@ -60,39 +60,39 @@ class ProjectView extends Component {
     });
   }
 
-  getSortedProjects () {
-    const { projects } = this.props;
+  getSortedTasks () {
+    const { tasks } = this.props;
     const { sort } = this.state;
     const { key } = sort;
-    let sortedProjects = projects.sortBy((project) => {
-      return project.get(key);
+    let sortedTasks = tasks.sortBy((task) => {
+      return task.get(key);
     });
-    const p = sort.ascending? sortedProjects : sortedProjects.reverse();
+    const p = sort.ascending? sortedTasks : sortedTasks.reverse();
     return p;
   }
 
-  onProjectUpdate = (newProject) => {
-    const { updateProject } = this.props;
-    updateProject(newProject);
+  onTaskUpdate = (newTask) => {
+    const { updateTask } = this.props;
+    updateTask(newTask);
   }
 
-  createNewProject () {
+  createNewTask () {
     this.setState({
       open: true,
-      newProject: fromJS(getNewProject())
+      newTask: fromJS(getNewTask())
     });
   };
 
-  updateNewProject = (project) => {
+  updateNewTask = (task) => {
     this.setState({
-      newProject: project
+      newTask: task
     });
   }
 
-  saveNewProject () {
-    const { addProject } = this.props;
-    const { newProject } = this.state;
-    addProject(newProject);
+  saveNewTask () {
+    const { addTask } = this.props;
+    const { newTask } = this.state;
+    addTask(newTask);
     this.setState({
       open: false
     });
@@ -105,10 +105,10 @@ class ProjectView extends Component {
   };
 
   render () {
-    const { newProject } = this.state;
-    const sortedProjects = this.getSortedProjects();
+    const { newTask } = this.state;
+    const sortedTasks = this.getSortedTasks();
     const styles = {
-      projectHeader: {
+      taskHeader: {
         cursor: 'pointer',
         padding: '0'
       },
@@ -143,11 +143,11 @@ class ProjectView extends Component {
       }
     };
 
-    const durationHeader = Object.assign({}, styles.projectHeader, styles.s);
-    const statusHeader = Object.assign({}, styles.projectHeader, styles.m);
-    const dateHeader = Object.assign({}, styles.projectHeader, styles.l);
-    const assigneeHeader = Object.assign({}, styles.projectHeader, styles.xl);
-    const completenessHeader = Object.assign({}, styles.projectHeader, styles.xl);
+    const durationHeader = Object.assign({}, styles.taskHeader, styles.s);
+    const statusHeader = Object.assign({}, styles.taskHeader, styles.m);
+    const dateHeader = Object.assign({}, styles.taskHeader, styles.l);
+    const assigneeHeader = Object.assign({}, styles.taskHeader, styles.xl);
+    const completenessHeader = Object.assign({}, styles.taskHeader, styles.xl);
 
     const sortIcon = (key) => {
       const { sort } = this.state;
@@ -184,7 +184,7 @@ class ProjectView extends Component {
       <FlatButton
         label='Add'
         primary
-        onTouchTap={this.saveNewProject}
+        onTouchTap={this.saveNewTask}
       />
     ];
 
@@ -193,13 +193,13 @@ class ProjectView extends Component {
         <Table>
           <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
             <TableRow>
-              // Project name
-              <TableHeaderColumn style={styles.projectHeader}>
+              // Task name
+              <TableHeaderColumn style={styles.taskHeader}>
                 <div
                   style={styles.columnLabel}
-                  onClick={this.handleSortClick('project')}>
-                  <span style={labelStyle('project')}>Project</span>
-                  {sortIcon('project')}
+                  onClick={this.handleSortClick('name')}>
+                  <span style={labelStyle('name')}>Task</span>
+                  {sortIcon('name')}
                 </div>
               </TableHeaderColumn>
               // Duration
@@ -260,12 +260,12 @@ class ProjectView extends Component {
           </TableHeader>
           <TableBody>
           {
-            sortedProjects.toList().map((project) => {
+            sortedTasks.toList().map((task) => {
               return (
-                <ProjectItem
-                  key={project.get('id')}
-                  project={project}
-                  onUpdate={this.onProjectUpdate}
+                <TaskItem
+                  key={task.get('id')}
+                  task={task}
+                  onUpdate={this.onTaskUpdate}
                 />
               );
             })
@@ -277,21 +277,21 @@ class ProjectView extends Component {
           right: '30px',
           bottom: '30px'
         }}
-          onClick={this.createNewProject}>
+          onClick={this.createNewTask}>
           <ContentAdd />
         </FloatingActionButton>
         <Dialog
-          title='New Project'
+          title='New Task'
           actions={actions}
           modal={false}
           contentStyle={{maxWidth: '1200px'}}
           open={this.state.open}
           onRequestClose={this.handleClose}
         >
-          <NewProject
-            key={newProject.get('id')}
-            project={newProject}
-            onUpdate={this.updateNewProject}
+          <NewTask
+            key={newTask.get('id')}
+            task={newTask}
+            onUpdate={this.updateNewTask}
           />
         </Dialog>
       </div>
@@ -300,12 +300,12 @@ class ProjectView extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  projects: state.projects
+  tasks: state.tasks
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  addProject,
-  updateProject
+  addTask,
+  updateTask
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
+export default connect(mapStateToProps, mapDispatchToProps)(TaskView);

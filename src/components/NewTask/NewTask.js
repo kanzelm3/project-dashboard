@@ -2,7 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { fromJS } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateProject } from '../../redux/modules/projects';
+import { updateTask } from '../../redux/modules/task';
 // material ui
 import DatePicker from 'material-ui/lib/date-picker/date-picker';
 import SelectField from 'material-ui/lib/select-field';
@@ -17,59 +17,59 @@ import TableBody from 'material-ui/lib/table/table-body';
 // other imports
 import { map } from 'lodash';
 import moment from 'moment';
-import { employeeNames } from '../ProjectItem/ProjectItemEnums';
+import { employeeNames } from '../TaskItem/TaskItemEnums';
 
-class ProjectItem extends Component {
+class TaskItem extends Component {
 
   constructor (props) {
     super(props);
-    const { project } = props;
+    const { task } = props;
     this.setTitle = this.setTitle.bind(this);
     this.setAssignee = this.setAssignee.bind(this);
     this.setBeginDate = this.setBeginDate.bind(this);
     this.setEndDate = this.setEndDate.bind(this);
     this.setDuration = this.setDuration.bind(this);
-    this.updateProjectValue = this.updateProjectValue.bind(this);
+    this.updateTaskValue = this.updateTaskValue.bind(this);
     this.state = {
-      duration: project.get('duration')
+      duration: task.get('duration')
     };
   }
 
   static propTypes = {
-    project: PropTypes.object,
-    updateProject: PropTypes.func,
+    task: PropTypes.object,
+    updateTask: PropTypes.func,
     onUpdate: PropTypes.func
   }
 
   setTitle = (event) => {
     const { value } = event.target;
-    this.updateProjectValue({'project': value});
+    this.updateTaskValue({'task': value});
   }
 
   setAssignee = (event, index, value) => {
-    this.updateProjectValue({'assignee': value});
+    this.updateTaskValue({'assignee': value});
   }
 
   setBeginDate = (event, value) => {
-    const { project } = this.props;
+    const { task } = this.props;
     const newBeginDate = moment(value);
     const beginString = newBeginDate.format('MM/DD/YYYY');
-    const duration = project.get('duration');
+    const duration = task.get('duration');
     const endDate = newBeginDate.add(duration, 'd');
     const endString = endDate.format('MM/DD/YYYY');
-    this.updateProjectValue({
+    this.updateTaskValue({
       'begin': beginString,
       'end': endString
     });
   };
 
   setEndDate = (event, value) => {
-    const { project } = this.props;
+    const { task } = this.props;
     const newEndDate = moment(value);
     const endString = newEndDate.format('MM/DD/YYYY');
-    const begin = moment(project.get('begin'), 'MM-DD-YYYY');
+    const begin = moment(task.get('begin'), 'MM-DD-YYYY');
     const difference = newEndDate.diff(begin, 'days');
-    this.updateProjectValue({
+    this.updateTaskValue({
       'end': endString,
       'duration': difference
     });
@@ -79,12 +79,12 @@ class ProjectItem extends Component {
   }
 
   setDuration = (event) => {
-    const { project } = this.props;
+    const { task } = this.props;
     const { value } = event.target;
-    const begin = moment(project.get('begin'), 'MM-DD-YYYY');
+    const begin = moment(task.get('begin'), 'MM-DD-YYYY');
     const end = begin.add(value, 'd');
     const endString = end.format('MM/DD/YYYY');
-    this.updateProjectValue({
+    this.updateTaskValue({
       'end': endString,
       'duration': value
     });
@@ -97,19 +97,19 @@ class ProjectItem extends Component {
     });
   }
 
-  updateProjectValue = (obj) => {
-    const { project, onUpdate } = this.props;
-    const newProject = project.merge(fromJS(obj));
-    onUpdate(newProject);
+  updateTaskValue = (obj) => {
+    const { task, onUpdate } = this.props;
+    const newTask = task.merge(fromJS(obj));
+    onUpdate(newTask);
   }
 
   render () {
-    const { project } = this.props;
-    const endDate = new Date(project.get('end'));
-    const beginDate = new Date(project.get('begin'));
+    const { task } = this.props;
+    const endDate = new Date(task.get('end'));
+    const beginDate = new Date(task.get('begin'));
 
     const styles = {
-      projectHeader: {
+      taskHeader: {
         cursor: 'pointer',
         padding: '0'
       },
@@ -144,17 +144,17 @@ class ProjectItem extends Component {
       }
     };
 
-    const durationHeader = Object.assign({}, styles.projectHeader, styles.s);
-    const dateHeader = Object.assign({}, styles.projectHeader, styles.l);
-    const assigneeHeader = Object.assign({}, styles.projectHeader, styles.xl);
+    const durationHeader = Object.assign({}, styles.taskHeader, styles.s);
+    const dateHeader = Object.assign({}, styles.taskHeader, styles.l);
+    const assigneeHeader = Object.assign({}, styles.taskHeader, styles.xl);
 
     return (
       <Table>
         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
           <TableRow>
-            // Project name
+            // Task name
             <TableHeaderColumn>
-              Project Name
+              Task Name
             </TableHeaderColumn>
             // Duration
             <TableHeaderColumn style={durationHeader}>
@@ -176,10 +176,10 @@ class ProjectItem extends Component {
         </TableHeader>
         <TableBody displayRowCheckbox={false}>
           <TableRow>
-            // Project name
+            // Task name
             <TableRowColumn>
               <TextField
-                defaultValue={project.get('project')}
+                defaultValue={task.get('name')}
                 onBlur={this.setTitle}
                 style={{width: '100%'}}
               />
@@ -210,9 +210,8 @@ class ProjectItem extends Component {
             // Assignee
             <TableRowColumn style={assigneeHeader}>
               <SelectField
-                value={project.get('assignee')}
-                onChange={this.setAssignee}
-                hintText={'Whos the lucky devil?'}>
+                value={task.get('assignee')}
+                onChange={this.setAssignee}>
                 {
                   map(employeeNames, (item, index) => {
                     return (
@@ -233,7 +232,7 @@ class ProjectItem extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateProject
+  updateTask
 }, dispatch);
 
-export default connect(null, mapDispatchToProps)(ProjectItem);
+export default connect(null, mapDispatchToProps)(TaskItem);

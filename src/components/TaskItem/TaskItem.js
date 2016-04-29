@@ -2,7 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { fromJS } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateProject } from '../../redux/modules/projects';
+import { updateTask } from '../../redux/modules/task';
 // material ui
 import Colors from 'material-ui/lib/styles/colors';
 import DatePicker from 'material-ui/lib/date-picker/date-picker';
@@ -16,13 +16,13 @@ import FlatButton from 'material-ui/lib/flat-button';
 // other imports
 import { map } from 'lodash';
 import moment from 'moment';
-import { employeeNames, statusTypes } from './ProjectItemEnums';
+import { employeeNames, statusTypes } from './TaskItemEnums';
 
-class ProjectItem extends Component {
+class TaskItem extends Component {
 
   constructor (props) {
     super(props);
-    const { project } = props;
+    const { task } = props;
     this.setTitle = this.setTitle.bind(this);
     this.setAssignee = this.setAssignee.bind(this);
     this.setStatus = this.setStatus.bind(this);
@@ -30,26 +30,26 @@ class ProjectItem extends Component {
     this.setEndDate = this.setEndDate.bind(this);
     this.setCompleteness = this.setCompleteness.bind(this);
     this.setDuration = this.setDuration.bind(this);
-    this.updateProjectValue = this.updateProjectValue.bind(this);
+    this.updateTaskValue = this.updateTaskValue.bind(this);
     this.state = {
-      completeness: project.get('completeness'),
-      duration: project.get('duration')
+      completeness: task.get('completeness'),
+      duration: task.get('duration')
     };
   }
 
   static propTypes = {
-    project: PropTypes.object,
-    updateProject: PropTypes.func,
+    task: PropTypes.object,
+    updateTask: PropTypes.func,
     onUpdate: PropTypes.func
   }
 
   setTitle = (event) => {
     const { value } = event.target;
-    this.updateProjectValue({'project': value});
+    this.updateTaskValue({name: value});
   }
 
   setAssignee = (event, index, value) => {
-    this.updateProjectValue({'assignee': value});
+    this.updateTaskValue({'assignee': value});
   }
 
   setStatus = (event, index, value) => {
@@ -57,29 +57,29 @@ class ProjectItem extends Component {
     if (value === 'Complete') {
       obj.completeness = 1;
     }
-    this.updateProjectValue(obj);
+    this.updateTaskValue(obj);
   }
 
   setBeginDate = (event, value) => {
-    const { project } = this.props;
+    const { task } = this.props;
     const newBeginDate = moment(value);
     const beginString = newBeginDate.format('MM/DD/YYYY');
-    const duration = project.get('duration');
+    const duration = task.get('duration');
     const endDate = newBeginDate.add(duration, 'd');
     const endString = endDate.format('MM/DD/YYYY');
-    this.updateProjectValue({
+    this.updateTaskValue({
       'begin': beginString,
       'end': endString
     });
   };
 
   setEndDate = (event, value) => {
-    const { project } = this.props;
+    const { task } = this.props;
     const newEndDate = moment(value);
     const endString = newEndDate.format('MM/DD/YYYY');
-    const begin = moment(project.get('begin'), 'MM-DD-YYYY');
+    const begin = moment(task.get('begin'), 'MM-DD-YYYY');
     const difference = newEndDate.diff(begin, 'days');
-    this.updateProjectValue({
+    this.updateTaskValue({
       'end': endString,
       'duration': difference
     });
@@ -97,9 +97,9 @@ class ProjectItem extends Component {
   setCompleteness = (event) => {
     const { completeness } = this.state;
     const obj = {'completeness': completeness};
-    const { project } = this.props;
+    const { task } = this.props;
     const today = moment();
-    const end = moment(project.get('end'), 'MM-DD-YYYY');
+    const end = moment(task.get('end'), 'MM-DD-YYYY');
     const diff = today.diff(end, 'd');
 
     if (completeness === 1) {
@@ -111,16 +111,16 @@ class ProjectItem extends Component {
     } else {
       obj.status = 'In Work';
     }
-    this.updateProjectValue(obj);
+    this.updateTaskValue(obj);
   }
 
   setDuration = (event) => {
-    const { project } = this.props;
+    const { task } = this.props;
     const { value } = event.target;
-    const begin = moment(project.get('begin'), 'MM-DD-YYYY');
+    const begin = moment(task.get('begin'), 'MM-DD-YYYY');
     const end = begin.add(value, 'd');
     const endString = end.format('MM/DD/YYYY');
-    this.updateProjectValue({
+    this.updateTaskValue({
       'end': endString,
       'duration': value
     });
@@ -133,17 +133,17 @@ class ProjectItem extends Component {
     });
   }
 
-  updateProjectValue = (obj) => {
-    const { project, onUpdate } = this.props;
-    const newProject = project.merge(fromJS(obj));
-    onUpdate(newProject);
+  updateTaskValue = (obj) => {
+    const { task, onUpdate } = this.props;
+    const newTask = task.merge(fromJS(obj));
+    onUpdate(newTask);
   }
 
   render () {
-    const { project } = this.props;
-    const endDate = new Date(project.get('end'));
-    const beginDate = new Date(project.get('begin'));
-    const status = project.get('status');
+    const { task } = this.props;
+    const endDate = new Date(task.get('end'));
+    const beginDate = new Date(task.get('begin'));
+    const status = task.get('status');
     const style = {
       slider: {
         width: '175px',
@@ -194,7 +194,7 @@ class ProjectItem extends Component {
       <TableRow>
         <TableRowColumn>
           <TextField
-            defaultValue={project.get('project')}
+            defaultValue={task.get('name')}
             onBlur={this.setTitle}
             style={{width: '100%'}}
           />
@@ -209,6 +209,7 @@ class ProjectItem extends Component {
         <TableRowColumn style={style.large}>
           <DatePicker
             value={beginDate}
+            maxDate={endDate}
             onChange={this.setBeginDate}
             autoOk />
         </TableRowColumn>
@@ -221,7 +222,7 @@ class ProjectItem extends Component {
         </TableRowColumn>
         <TableRowColumn style={style.xLarge}>
           <SelectField
-            value={project.get('assignee')}
+            value={task.get('assignee')}
             onChange={this.setAssignee}>
             {
               map(employeeNames, (item, index) => {
@@ -244,7 +245,7 @@ class ProjectItem extends Component {
           <div>
             <Slider step={0.05}
               style={style.slider}
-              value={project.get('completeness')}
+              value={task.get('completeness')}
               onChange={this.updateCompleteness}
               onDragStop={this.setCompleteness}/>
             <span style={style.sliderVal}>
@@ -258,7 +259,7 @@ class ProjectItem extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateProject
+  updateTask
 }, dispatch);
 
-export default connect(null, mapDispatchToProps)(ProjectItem);
+export default connect(null, mapDispatchToProps)(TaskItem);

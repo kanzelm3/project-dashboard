@@ -83,8 +83,8 @@ class AppLeftNav extends React.Component {
     };
 
     const menuItems = [
-      { primaryText: 'Summary', value: '/summary' },
-      { primaryText: 'Projects', value: '/projects' }
+      { primaryText: 'Summary', value: '/' },
+      { primaryText: 'Tasks', value: '/tasks' }
     ];
 
     return (

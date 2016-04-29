@@ -5,7 +5,8 @@ export const employeeNames = [
   'Mark Lambrecht',
   'Adam Redmon',
   'Larry Gariepy',
-  'Paddy Fotovich'
+  'Paddy Fotovich',
+  'Jan Lessmann'
 ];
 
 export const statusTypes = [

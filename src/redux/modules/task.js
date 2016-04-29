@@ -4,13 +4,13 @@ import moment from 'moment';
  * Enums for action types
  * @type {Object}
  */
-const ADD_PROJECT = 'ADD_PROJECT';
-const UPDATE_PROJECT = 'UPDATE_PROJECT';
+const ADD_TASK = 'ADD_TASK';
+const UPDATE_TASK = 'UPDATE_TASK';
 
-export const initialProjects = [
+export const initialTasks = [
   {
     id: 101,
-    project: 'A',
+    name: 'LPWS Remodel',
     begin: '03/22/2016',
     end: '04/28/2016',
     assignee: 'Paddy Fotovich',
@@ -20,7 +20,7 @@ export const initialProjects = [
   },
   {
     id: 102,
-    project: 'B',
+    name: 'ETESIM Wrapper',
     begin: '01/01/2016',
     end: '01/15/2016',
     assignee: 'Kevin Kanzelmeyer',
@@ -30,17 +30,17 @@ export const initialProjects = [
   },
   {
     id: 103,
-    project: 'C',
+    name: 'Q53 etesim integration',
     begin: '03/01/2016',
     end: '04/22/2016',
-    assignee: 'Adam Redmon',
+    assignee: 'Jan Lessmann',
     duration: 5,
     status: 'In Work',
     completeness: 0.95
   }
 ];
 
-export const getNewProject = () => {
+export const getNewTask = () => {
   const millis = moment().valueOf();
   const duration = 1;
   const now = moment();
@@ -49,7 +49,7 @@ export const getNewProject = () => {
   const tomorrowString = tomorrow.format('MM/DD/YYYY');
   return {
     id: millis,
-    project: 'New Project',
+    name: 'New Task',
     begin: nowString,
     end: tomorrowString,
     assignee: 'Unassigned',
@@ -63,45 +63,45 @@ export const getNewProject = () => {
  * Action to add data to the state
  * @param  {[data]} data The data to add
  */
-export const addProject = (project) => {
+export const addTask = (task) => {
   return ({
-    type: ADD_PROJECT,
+    type: ADD_TASK,
     payload: {
-      project
+      task
     }
   });
 };
 
-export const updateProject = (project) => ({
-  type: UPDATE_PROJECT,
+export const updateTask = (task) => ({
+  type: UPDATE_TASK,
   payload: {
-    project
+    task
   }
 });
 
-const addProjectHandler = (state, { payload: { project } }) => {
-  return state.set(project.get('id'), project);
+const addTaskHandler = (state, { payload: { task } }) => {
+  return state.set(task.get('id'), task);
 };
 
-const updateProjectHandler = (state, { payload: { project } }) => {
-  return state.set(project.get('id'), project);
+const updateTaskHandler = (state, { payload: { task } }) => {
+  return state.set(task.get('id'), task);
 };
 /**
  * Reducer for handling data actions
  * @param  {[type]} state  [description]
  * @param  {[type]} action [description]
  */
-const projectReducer = (state = Map(), action) => {
+const taskReducer = (state = Map(), action) => {
   switch (action.type) {
-    case ADD_PROJECT:
-      return addProjectHandler(state, action);
+    case ADD_TASK:
+      return addTaskHandler(state, action);
 
-    case UPDATE_PROJECT:
-      return updateProjectHandler(state, action);
+    case UPDATE_TASK:
+      return updateTaskHandler(state, action);
 
     default:
       return state;
   }
 };
 
-export default projectReducer;
+export default taskReducer;

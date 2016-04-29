@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
 import { routeReducer as router } from 'react-router-redux';
-import projectReducer from './modules/projects';
+import taskReducer from './modules/task';
 
 export default combineReducers({
-  projects: projectReducer,
+  tasks: taskReducer,
   router
 });

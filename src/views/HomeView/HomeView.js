@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import Dropzone from 'react-dropzone';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addData } from '../../redux/modules/log-data';
 
 export class HomeView extends React.Component {
 
@@ -85,7 +84,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  addData
+  // addData
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeView);
