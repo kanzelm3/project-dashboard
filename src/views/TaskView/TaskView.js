@@ -28,13 +28,16 @@ class TaskView extends Component {
     this.handleSortClick = this.handleSortClick.bind(this);
     this.createNewTask = this.createNewTask.bind(this);
     this.saveNewTask = this.saveNewTask.bind(this);
+    this.saveEditTask = this.saveEditTask.bind(this);
     this.state = {
       sort: {
         key: 'end',
         ascending: true
       },
       open: false,
-      newTask: fromJS(getNewTask())
+      newTask: fromJS(getNewTask()),
+      edit: false,
+      selectedTask: fromJS(getNewTask())
     };
   }
 
@@ -89,6 +92,14 @@ class TaskView extends Component {
     });
   }
 
+  updateEditTask = (task) => {
+    console.debug('task updated');
+    console.debug(task);
+    this.setState({
+      selectedTask: task
+    });
+  }
+
   saveNewTask () {
     const { addTask } = this.props;
     const { newTask } = this.state;
@@ -98,14 +109,37 @@ class TaskView extends Component {
     });
   }
 
+  saveEditTask () {
+    const { updateTask } = this.props;
+    const { selectedTask } = this.state;
+    updateTask(selectedTask);
+    this.setState({
+      edit: false
+    });
+  }
+
   handleClose = () => {
     this.setState({
       open: false
     });
   };
 
+  handleEditClose = () => {
+    this.setState({
+      edit: false
+    });
+  };
+
+  handleRowClick = (task) => {
+    console.debug(task);
+    this.setState({
+      edit: true,
+      selectedTask: task
+    });
+  }
+
   render () {
-    const { newTask } = this.state;
+    const { newTask, selectedTask } = this.state;
     const sortedTasks = this.getSortedTasks();
     const styles = {
       taskHeader: {
@@ -188,6 +222,19 @@ class TaskView extends Component {
       />
     ];
 
+    const editActions = [
+      <FlatButton
+        label='Cancel'
+        secondary
+        onTouchTap={this.handleEditClose}
+      />,
+      <FlatButton
+        label='Save'
+        primary
+        onTouchTap={this.saveEditTask}
+      />
+    ];
+
     return (
       <div>
         <Table>
@@ -258,7 +305,10 @@ class TaskView extends Component {
               </TableHeaderColumn>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody
+            deselectOnClickaway
+            showRowHover
+          >
           {
             sortedTasks.toList().map((task) => {
               return (
@@ -266,6 +316,7 @@ class TaskView extends Component {
                   key={task.get('id')}
                   task={task}
                   onUpdate={this.onTaskUpdate}
+                  onEdit={this.handleRowClick}
                 />
               );
             })
@@ -292,6 +343,20 @@ class TaskView extends Component {
             key={newTask.get('id')}
             task={newTask}
             onUpdate={this.updateNewTask}
+          />
+        </Dialog>
+        <Dialog
+          title={selectedTask.get('name')}
+          actions={editActions}
+          modal={false}
+          contentStyle={{maxWidth: '1200px'}}
+          open={this.state.edit}
+          onRequestClose={this.handleEditClose}
+        >
+          <NewTask
+            key={selectedTask.get('id')}
+            task={selectedTask}
+            onUpdate={this.updateEditTask}
           />
         </Dialog>
       </div>

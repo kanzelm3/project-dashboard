@@ -40,7 +40,8 @@ class TaskItem extends Component {
   static propTypes = {
     task: PropTypes.object,
     updateTask: PropTypes.func,
-    onUpdate: PropTypes.func
+    onUpdate: PropTypes.func,
+    onEdit: PropTypes.func
   }
 
   setTitle = (event) => {
@@ -139,6 +140,11 @@ class TaskItem extends Component {
     onUpdate(newTask);
   }
 
+  handleRowClick = (task) => (evt) => {
+    const { onEdit } = this.props;
+    onEdit(task);
+  }
+
   render () {
     const { task } = this.props;
     const endDate = new Date(task.get('end'));
@@ -191,7 +197,7 @@ class TaskItem extends Component {
     };
 
     return (
-      <TableRow>
+      <TableRow onRowClick={this.handleRowClick(task)}>
         <TableRowColumn>
           <TextField
             defaultValue={task.get('name')}

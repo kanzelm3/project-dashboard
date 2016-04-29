@@ -43,7 +43,7 @@ class TaskItem extends Component {
 
   setTitle = (event) => {
     const { value } = event.target;
-    this.updateTaskValue({'task': value});
+    this.updateTaskValue({'name': value});
   }
 
   setAssignee = (event, index, value) => {
@@ -110,7 +110,6 @@ class TaskItem extends Component {
 
     const styles = {
       taskHeader: {
-        cursor: 'pointer',
         padding: '0'
       },
       columnLabel: {
@@ -149,7 +148,7 @@ class TaskItem extends Component {
     const assigneeHeader = Object.assign({}, styles.taskHeader, styles.xl);
 
     return (
-      <Table>
+      <Table key={1} selectable={false}>
         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
           <TableRow>
             // Task name
