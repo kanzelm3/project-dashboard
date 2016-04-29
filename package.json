@@ -1,7 +1,7 @@
 {
-  "name": "a2i-radar-dashboard",
+  "name": "task-manager-dashboard",
   "version": "0.0.1",
-  "description": "Data visualisation tool for A2I radar models",
+  "description": "task management tool",
   "main": "index.js",
   "private": true,
   "engines": {
@@ -61,7 +61,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kkanzelmeyer/react-dashboard"
+    "url": "git+https://github.com/kkanzelmeyer/project-dashboard"
   },
   "author": "Kevin Kanzelmeyer",
   "license": "UNLICENSED",
@@ -173,7 +173,7 @@
     "yargs": "^3.18.0"
   },
   "bin": {
-    "mmd-dashboard": "compile.js"
+    "task-dashboard": "compile.js"
   },
   "directories": {
     "test": "tests"

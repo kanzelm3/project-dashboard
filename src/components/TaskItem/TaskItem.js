@@ -190,7 +190,7 @@ class TaskItem extends Component {
     const durationHeader = Object.assign({}, styles.taskHeader, styles.s);
     const statusHeader = Object.assign({}, styles.taskHeader, styles.m);
     const dateHeader = Object.assign({}, styles.taskHeader, styles.l);
-    const assigneeHeader = Object.assign({}, styles.taskHeader, styles.xl);
+    const assigneeHeader = Object.assign({}, styles.taskHeader, styles.l);
     const completenessHeader = Object.assign({}, styles.taskHeader, styles.xl);
 
     const getStatusStyle = (status) => {
