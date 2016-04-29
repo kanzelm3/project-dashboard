@@ -5,18 +5,18 @@ import { bindActionCreators } from 'redux';
 import { updateTask } from '../../redux/modules/task';
 // material ui
 import Colors from 'material-ui/lib/styles/colors';
-import DatePicker from 'material-ui/lib/date-picker/date-picker';
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
+// import DatePicker from 'material-ui/lib/date-picker/date-picker';
+// import SelectField from 'material-ui/lib/select-field';
+// import MenuItem from 'material-ui/lib/menus/menu-item';
 import Slider from 'material-ui/lib/slider';
 import TableRow from 'material-ui/lib/table/table-row';
 import TableRowColumn from 'material-ui/lib/table/table-row-column';
-import TextField from 'material-ui/lib/text-field';
+// import TextField from 'material-ui/lib/text-field';
 import FlatButton from 'material-ui/lib/flat-button';
 // other imports
-import { map } from 'lodash';
+// import { map } from 'lodash';
 import moment from 'moment';
-import { employeeNames, statusTypes } from './TaskItemEnums';
+import { statusTypes } from './TaskItemEnums';
 
 class TaskItem extends Component {
 
@@ -147,10 +147,10 @@ class TaskItem extends Component {
 
   render () {
     const { task } = this.props;
-    const endDate = new Date(task.get('end'));
-    const beginDate = new Date(task.get('begin'));
+    // const endDate = new Date(task.get('end'));
+    // const beginDate = new Date(task.get('begin'));
     const status = task.get('status');
-    const style = {
+    const styles = {
       slider: {
         width: '175px',
         float: 'left'
@@ -159,19 +159,39 @@ class TaskItem extends Component {
         float: 'right',
         marginTop: '24px'
       },
-      xLarge: {
+      xl: {
         width: '275px'
       },
-      large: {
+      l: {
         width: '175px'
       },
-      medium: {
+      m: {
         width: '130px'
       },
-      small: {
+      s: {
         width: '110px'
+      },
+      label: {
+        fontSize: '16px',
+        lineHeight: '16px'
+      },
+      taskHeader: {
+        cursor: 'pointer',
+        padding: '0'
+      },
+      columnLabel: {
+        padding: '22px'
+      },
+      completenessDiv: {
+        padding: '0 22px'
       }
     };
+
+    const durationHeader = Object.assign({}, styles.taskHeader, styles.s);
+    const statusHeader = Object.assign({}, styles.taskHeader, styles.m);
+    const dateHeader = Object.assign({}, styles.taskHeader, styles.l);
+    const assigneeHeader = Object.assign({}, styles.taskHeader, styles.xl);
+    const completenessHeader = Object.assign({}, styles.taskHeader, styles.xl);
 
     const getStatusStyle = (status) => {
       let color;
@@ -197,64 +217,65 @@ class TaskItem extends Component {
     };
 
     return (
-      <TableRow onRowClick={this.handleRowClick(task)}>
-        <TableRowColumn>
-          <TextField
-            defaultValue={task.get('name')}
-            onBlur={this.setTitle}
-            style={{width: '100%'}}
-          />
+      <TableRow>
+        <TableRowColumn style={styles.taskHeader}>
+          <div
+            style={styles.columnLabel}
+            onClick={this.handleRowClick(task)}
+          >
+            <span style={styles.label}>{task.get('name')}</span>
+          </div>
         </TableRowColumn>
-        <TableRowColumn style={{width: '110px'}}>
-          <TextField
-            value={this.state.duration}
-            onChange={this.updateDuration}
-            onEnterKeyDown={this.setDuration}
-            onBlur={this.setDuration} />
+        <TableRowColumn style={durationHeader}>
+          <div
+            style={styles.columnLabel}
+            onClick={this.handleRowClick(task)}
+          >
+            <span style={styles.label}>{task.get('duration')}</span>
+          </div>
         </TableRowColumn>
-        <TableRowColumn style={style.large}>
-          <DatePicker
-            value={beginDate}
-            maxDate={endDate}
-            onChange={this.setBeginDate}
-            autoOk />
+        <TableRowColumn style={dateHeader}>
+          <div
+            style={styles.columnLabel}
+            onClick={this.handleRowClick(task)}
+          >
+            <span style={styles.label}>{task.get('begin')}</span>
+          </div>
         </TableRowColumn>
-        <TableRowColumn style={style.large}>
-          <DatePicker
-            value={endDate}
-            onChange={this.setEndDate}
-            minDate={beginDate}
-            autoOk />
+        <TableRowColumn style={dateHeader}>
+          <div
+            style={styles.columnLabel}
+            onClick={this.handleRowClick(task)}
+          >
+            <span style={styles.label}>{task.get('end')}</span>
+          </div>
         </TableRowColumn>
-        <TableRowColumn style={style.xLarge}>
-          <SelectField
-            value={task.get('assignee')}
-            onChange={this.setAssignee}>
-            {
-              map(employeeNames, (item, index) => {
-                return (
-                  <MenuItem
-                    value={item}
-                    key={index}
-                    primaryText={item} />
-                );
-              })
-            }
-          </SelectField>
+        <TableRowColumn style={assigneeHeader}>
+          <div
+            style={styles.columnLabel}
+            onClick={this.handleRowClick(task)}
+          >
+            <span style={styles.label}>{task.get('assignee')}</span>
+          </div>
         </TableRowColumn>
-        <TableRowColumn style={style.medium}>
-          <FlatButton
-            label={status}
-            style={getStatusStyle(status)} />
+        <TableRowColumn style={statusHeader}>
+          <div
+            style={styles.columnLabel}
+            onClick={this.handleRowClick(task)}
+          >
+            <FlatButton
+              label={status}
+              style={getStatusStyle(status)} />
+          </div>
         </TableRowColumn>
-        <TableRowColumn style={style.xLarge}>
-          <div>
+        <TableRowColumn style={completenessHeader}>
+          <div style={styles.completenessDiv}>
             <Slider step={0.05}
-              style={style.slider}
+              style={styles.slider}
               value={task.get('completeness')}
               onChange={this.updateCompleteness}
               onDragStop={this.setCompleteness}/>
-            <span style={style.sliderVal}>
+            <span style={styles.sliderVal}>
               {Math.round(100*this.state.completeness)}%
             </span>
           </div>

@@ -131,7 +131,6 @@ class TaskView extends Component {
   };
 
   handleRowClick = (task) => {
-    console.debug(task);
     this.setState({
       edit: true,
       selectedTask: task
