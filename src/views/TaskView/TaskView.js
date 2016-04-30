@@ -186,9 +186,9 @@ class TaskView extends Component {
       if (key === sort.key) {
         icon = sort.ascending
           ? <NavigationArrowDownward
-            style={styles.icon}/>
+            style={styles.icon} />
           : <NavigationArrowUpward
-            style={styles.icon}/>;
+            style={styles.icon} />;
       } else {
         icon = <div></div>;
       }

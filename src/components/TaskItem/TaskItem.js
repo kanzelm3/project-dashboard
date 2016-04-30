@@ -274,7 +274,7 @@ class TaskItem extends Component {
               style={styles.slider}
               value={task.get('completeness')}
               onChange={this.updateCompleteness}
-              onDragStop={this.setCompleteness}/>
+              onDragStop={this.setCompleteness} />
             <span style={styles.sliderVal}>
               {Math.round(100*this.state.completeness)}%
             </span>

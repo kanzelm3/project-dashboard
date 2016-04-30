@@ -108,7 +108,7 @@ class AppLeftNav extends React.Component {
                 value={item.value}
                 key={i}
                 disabled={disableMenu}
-                style={menuStyle}/>;
+                style={menuStyle} />;
             })
           }
         </SelectableList>

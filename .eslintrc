@@ -1,11 +1,18 @@
 {
   "parser"  : "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
   "extends" : [
     "standard",
     "standard-react"
   ],
   "plugins" : [
-    "flow-vars"
+    "flow-vars",
+    "react"
   ],
   "env"     : {
     "browser" : true
