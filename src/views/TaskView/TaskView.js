@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { addTask,
          updateTask,
+         deleteTask,
          getNewTask,
          initialTasks } from '../../redux/modules/task';
 import TaskItem from 'components/TaskItem/TaskItem';
@@ -29,6 +30,7 @@ class TaskView extends Component {
     this.createNewTask = this.createNewTask.bind(this);
     this.saveNewTask = this.saveNewTask.bind(this);
     this.saveEditTask = this.saveEditTask.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
     this.state = {
       sort: {
         key: 'end',
@@ -51,6 +53,7 @@ class TaskView extends Component {
   static propTypes = {
     addTask: PropTypes.func,
     updateTask: PropTypes.func,
+    deleteTask: PropTypes.func,
     tasks: PropTypes.object
   }
 
@@ -111,6 +114,15 @@ class TaskView extends Component {
     const { updateTask } = this.props;
     const { selectedTask } = this.state;
     updateTask(selectedTask);
+    this.setState({
+      edit: false
+    });
+  }
+
+  deleteTask () {
+    const { deleteTask } = this.props;
+    const { selectedTask } = this.state;
+    deleteTask(selectedTask);
     this.setState({
       edit: false
     });
@@ -220,6 +232,11 @@ class TaskView extends Component {
     ];
 
     const editActions = [
+      <FlatButton
+        label='Delete'
+        secondary
+        onTouchTap={this.deleteTask}
+      />,
       <FlatButton
         label='Cancel'
         secondary
@@ -367,7 +384,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   addTask,
-  updateTask
+  updateTask,
+  deleteTask
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(TaskView);

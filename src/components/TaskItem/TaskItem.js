@@ -5,16 +5,11 @@ import { bindActionCreators } from 'redux';
 import { updateTask } from '../../redux/modules/task';
 // material ui
 import Colors from 'material-ui/lib/styles/colors';
-// import DatePicker from 'material-ui/lib/date-picker/date-picker';
-// import SelectField from 'material-ui/lib/select-field';
-// import MenuItem from 'material-ui/lib/menus/menu-item';
 import Slider from 'material-ui/lib/slider';
 import TableRow from 'material-ui/lib/table/table-row';
 import TableRowColumn from 'material-ui/lib/table/table-row-column';
-// import TextField from 'material-ui/lib/text-field';
 import FlatButton from 'material-ui/lib/flat-button';
 // other imports
-// import { map } from 'lodash';
 import moment from 'moment';
 import { statusTypes } from './TaskItemEnums';
 
@@ -147,8 +142,6 @@ class TaskItem extends Component {
 
   render () {
     const { task } = this.props;
-    // const endDate = new Date(task.get('end'));
-    // const beginDate = new Date(task.get('begin'));
     const status = task.get('status');
     const styles = {
       slider: {
@@ -180,7 +173,8 @@ class TaskItem extends Component {
         padding: '0'
       },
       columnLabel: {
-        padding: '22px'
+        padding: '22px',
+        textOverflow: 'ellipsis'
       },
       completenessDiv: {
         padding: '0 22px'
