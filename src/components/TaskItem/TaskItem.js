@@ -181,7 +181,7 @@ class TaskItem extends Component {
       }
     };
 
-    const durationHeader = Object.assign({}, styles.taskHeader, styles.s);
+    const durationHeader = Object.assign({}, styles.taskHeader, styles.s, this.mobileHide);
     const statusHeader = Object.assign({}, styles.taskHeader, styles.m);
     const dateHeader = Object.assign({}, styles.taskHeader, styles.l);
     const assigneeHeader = Object.assign({}, styles.taskHeader, styles.l);
