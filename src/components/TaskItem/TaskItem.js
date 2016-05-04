@@ -3,6 +3,14 @@ import { fromJS } from 'immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateTask } from '../../redux/modules/task';
+import { durationHeader,
+         statusHeader,
+         beginHeader,
+         endHeader,
+         assigneeHeader,
+         completenessHeader,
+         tableStyles
+       } from 'helpers/tableStyles';
 // material ui
 import Colors from 'material-ui/lib/styles/colors';
 import Slider from 'material-ui/lib/slider';
@@ -36,7 +44,8 @@ class TaskItem extends Component {
     task: PropTypes.object,
     updateTask: PropTypes.func,
     onUpdate: PropTypes.func,
-    onEdit: PropTypes.func
+    onEdit: PropTypes.func,
+    width: PropTypes.number
   }
 
   setTitle = (event) => {
@@ -141,51 +150,25 @@ class TaskItem extends Component {
   }
 
   render () {
-    const { task } = this.props;
+    const { task, width } = this.props;
     const status = task.get('status');
-    const styles = {
-      slider: {
-        width: '175px',
-        float: 'left'
-      },
-      sliderVal: {
-        float: 'right',
-        marginTop: '24px'
-      },
-      xl: {
-        width: '275px'
-      },
-      l: {
-        width: '175px'
-      },
-      m: {
-        width: '130px'
-      },
-      s: {
-        width: '110px'
-      },
-      label: {
-        fontSize: '16px',
-        lineHeight: '16px'
-      },
-      taskHeader: {
-        cursor: 'pointer',
-        padding: '0'
-      },
-      columnLabel: {
-        padding: '22px',
-        textOverflow: 'ellipsis'
-      },
-      completenessDiv: {
-        padding: '0 22px'
-      }
-    };
-
-    const durationHeader = Object.assign({}, styles.taskHeader, styles.s, this.mobileHide);
-    const statusHeader = Object.assign({}, styles.taskHeader, styles.m);
-    const dateHeader = Object.assign({}, styles.taskHeader, styles.l);
-    const assigneeHeader = Object.assign({}, styles.taskHeader, styles.l);
-    const completenessHeader = Object.assign({}, styles.taskHeader, styles.xl);
+    // const tableStyles = {
+    //   slider: {
+    //     width: '175px',
+    //     float: 'left'
+    //   },
+    //   sliderVal: {
+    //     float: 'right',
+    //     marginTop: '24px'
+    //   },
+    //   label: {
+    //     fontSize: '16px',
+    //     lineHeight: '16px'
+    //   },
+    //   completenessDiv: {
+    //     padding: '0 22px'
+    //   }
+    // };
 
     const getStatusStyle = (status) => {
       let color;
@@ -212,49 +195,49 @@ class TaskItem extends Component {
 
     return (
       <TableRow>
-        <TableRowColumn style={styles.taskHeader}>
+        <TableRowColumn style={tableStyles.taskHeader}>
           <div
-            style={styles.columnLabel}
+            style={tableStyles.columnLabel}
             onClick={this.handleRowClick(task)}
           >
-            <span style={styles.label}>{task.get('name')}</span>
+            <span style={tableStyles.textLabel}>{task.get('name')}</span>
           </div>
         </TableRowColumn>
-        <TableRowColumn style={durationHeader}>
+        <TableRowColumn style={durationHeader(width)}>
           <div
-            style={styles.columnLabel}
+            style={tableStyles.columnLabel}
             onClick={this.handleRowClick(task)}
           >
-            <span style={styles.label}>{task.get('duration')}</span>
+            <span style={tableStyles.textLabel}>{task.get('duration')}</span>
           </div>
         </TableRowColumn>
-        <TableRowColumn style={dateHeader}>
+        <TableRowColumn style={beginHeader(width)}>
           <div
-            style={styles.columnLabel}
+            style={tableStyles.columnLabel}
             onClick={this.handleRowClick(task)}
           >
-            <span style={styles.label}>{task.get('begin')}</span>
+            <span style={tableStyles.textLabel}>{task.get('begin')}</span>
           </div>
         </TableRowColumn>
-        <TableRowColumn style={dateHeader}>
+        <TableRowColumn style={endHeader(width)}>
           <div
-            style={styles.columnLabel}
+            style={tableStyles.columnLabel}
             onClick={this.handleRowClick(task)}
           >
-            <span style={styles.label}>{task.get('end')}</span>
+            <span style={tableStyles.textLabel}>{task.get('end')}</span>
           </div>
         </TableRowColumn>
-        <TableRowColumn style={assigneeHeader}>
+        <TableRowColumn style={assigneeHeader(width)}>
           <div
-            style={styles.columnLabel}
+            style={tableStyles.columnLabel}
             onClick={this.handleRowClick(task)}
           >
-            <span style={styles.label}>{task.get('assignee')}</span>
+            <span style={tableStyles.textLabel}>{task.get('assignee')}</span>
           </div>
         </TableRowColumn>
         <TableRowColumn style={statusHeader}>
           <div
-            style={styles.columnLabel}
+            style={tableStyles.columnLabel}
             onClick={this.handleRowClick(task)}
           >
             <FlatButton
@@ -263,13 +246,13 @@ class TaskItem extends Component {
           </div>
         </TableRowColumn>
         <TableRowColumn style={completenessHeader}>
-          <div style={styles.completenessDiv}>
+          <div style={tableStyles.completenessDiv}>
             <Slider step={0.05}
-              style={styles.slider}
+              style={tableStyles.slider}
               value={task.get('completeness')}
               onChange={this.updateCompleteness}
               onDragStop={this.setCompleteness} />
-            <span style={styles.sliderVal}>
+            <span style={tableStyles.sliderVal}>
               {Math.round(100*this.state.completeness)}%
             </span>
           </div>
