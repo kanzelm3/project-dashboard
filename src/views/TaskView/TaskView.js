@@ -18,6 +18,7 @@ import { durationHeader,
 import TaskItem from 'components/TaskItem/TaskItem';
 import NewTask from 'components/NewTask/NewTask';
 // material ui
+import Colors from 'material-ui/lib/styles/colors';
 import Dialog from 'material-ui/lib/dialog';
 import Table from 'material-ui/lib/table/table';
 import TableHeaderColumn from 'material-ui/lib/table/table-header-column';
@@ -206,12 +207,13 @@ class TaskView extends Component {
     const actions = [
       <FlatButton
         label='Cancel'
-        secondary
+        style={{color: Colors.grey500, fontWeight: 'bold'}}
         onTouchTap={this.handleClose}
       />,
       <FlatButton
         label='Add'
         primary
+        style={{fontWeight: 'bold'}}
         onTouchTap={this.saveNewTask}
       />
     ];
@@ -219,17 +221,18 @@ class TaskView extends Component {
     const editActions = [
       <FlatButton
         label='Delete'
-        secondary
         onTouchTap={this.deleteTask}
+        style={{float: 'left', color: Colors.pink500, fontWeight: 'bold'}}
       />,
       <FlatButton
         label='Cancel'
-        secondary
+        style={{color: Colors.grey500, fontWeight: 'bold'}}
         onTouchTap={this.handleEditClose}
       />,
       <FlatButton
         label='Save'
         primary
+        style={{fontWeight: 'bold'}}
         onTouchTap={this.saveEditTask}
       />
     ];
