@@ -25,6 +25,7 @@ export class PlotView extends React.Component {
       showFields: true,
       showTrackList: true
     };
+    console.debug('Creating plotview');
     this.updateTrack = this.updateTrack.bind(this);
     this.updateField = this.updateField.bind(this);
   }
@@ -102,7 +103,7 @@ export class PlotView extends React.Component {
         this.state.showFields = false;
         this.state.showTrackList = true;
         this.plot = <PositionError
-          data={trackData}
+          data={data}
           title={`Track ${selectedIndex} - Position Error`}
           fieldX='t_valid'
           width={width+80}

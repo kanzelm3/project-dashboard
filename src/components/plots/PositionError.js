@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import Plotly from 'plotly.js';
-import { Vector3, CatmullRomCurve3 } from 'three';
+// import { Vector3, CatmullRomCurve3 } from 'three';
 import Theme from '../../helpers/theme.js';
 
 class PositionError extends React.Component {
@@ -37,45 +37,55 @@ class PositionError extends React.Component {
   }
 
   createPlotData (data) {
-    let truths = [];
+    // let truths = [];
     let tracks = [];
     let trackTimes = [];
-    let tMax = 0;
+    // let tMax = 0;
 
     // separate data into new arrays
+    // data.forEach((row, i) => {
+    //   let point = (new Vector3(
+    //     row.get('sv_ecef_x'),
+    //     row.get('sv_ecef_y'),
+    //     row.get('sv_ecef_z')
+    //   ));
+    //   let t = row.get('t_valid');
+    //   if (t > tMax) {
+    //     tMax = t;
+    //   }
+    //   if (row.get('type') === 'truth') {
+    //     truths.push(point);
+    //   }
+    //   if (row.get('type') === 'track') {
+    //     tracks.push(point);
+    //     trackTimes.push(t);
+    //   }
+    // });
+    console.debug('creating plot');
     data.forEach((row, i) => {
-      let point = (new Vector3(
-        row.get('sv_ecef_x'),
-        row.get('sv_ecef_y'),
-        row.get('sv_ecef_z')
-      ));
-      let t = row.get('t_valid');
-      if (t > tMax) {
-        tMax = t;
-      }
-      if (row.get('type') === 'truth') {
-        truths.push(point);
-      }
       if (row.get('type') === 'track') {
-        tracks.push(point);
-        trackTimes.push(t);
+        console.debug(row.get('error'), row.get('t_valid'));
+        tracks.push(row.get('error'));
+        trackTimes.push(row.get('t_valid'));
       }
     });
-    const truthSpline = new CatmullRomCurve3(truths);
-    let errors = [];
-    let indexes = [];
-    trackTimes.forEach((time, i) => {
-      let tRel = time/tMax;
-      let trackPoint = tracks[i];
-      let truthPoint = truthSpline.getPoint(tRel);
-      let distance = truthPoint.distanceTo(trackPoint);
-      errors.push(distance);
-      indexes.push(i);
-    });
+
+    // const truthSpline = new CatmullRomCurve3(truths);
+    // let errors = [];
+    // let indexes = [];
+    // trackTimes.forEach((time, i) => {
+    //   let tRel = time/tMax;
+    //   let trackPoint = tracks[i];
+    //   let truthPoint = truthSpline.getPoint(tRel);
+    //   let distance = truthPoint.distanceTo(trackPoint);
+    //   errors.push(distance);
+    //   indexes.push(i);
+    // });
+
     return [{
       type: 'scatter',
       x: trackTimes,
-      y: errors,
+      y: tracks,
       mode: 'markers+lines',
       marker: {
         size: 8,
