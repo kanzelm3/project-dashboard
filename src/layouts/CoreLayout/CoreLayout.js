@@ -4,6 +4,10 @@ import { connect } from 'react-redux';
 import AppBar from 'material-ui/lib/app-bar';
 import { Spacing, Colors } from 'material-ui/lib/styles';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
+import IconButton from 'material-ui/lib/icon-button';
+import IconMenu from 'material-ui/lib/menus/icon-menu';
+import MoreVertIcon from 'material-ui/lib/svg-icons/navigation/more-vert';
+import MenuItem from 'material-ui/lib/menus/menu-item';
 import Theme from '../../helpers/theme';
 import withViewport from '../../helpers/withViewport';
 import AppLeftNav from './AppLeftNav';
@@ -21,11 +25,15 @@ export class CoreLayout extends React.Component {
     super();
     this.state = {
       muiTheme: ThemeManager.getMuiTheme(Theme),
-      leftNavOpen: false
+      leftNavOpen: false,
+      trackMouseMovement: false,
+      showHeatmap: false
     };
     this.handleTouchTapLeftIconButton = this.handleTouchTapLeftIconButton.bind(this);
     this.handleChangeRequestLeftNav = this.handleChangeRequestLeftNav.bind(this);
     this.handleRequestChangeList = this.handleRequestChangeList.bind(this);
+    this.handleTrackMouseMovement = this.handleTrackMouseMovement.bind(this);
+    this.handleShowHeatMap = this.handleShowHeatMap.bind(this);
   }
 
   static propTypes = {
@@ -135,6 +143,18 @@ export class CoreLayout extends React.Component {
     });
   }
 
+  handleTrackMouseMovement () {
+    this.setState({
+      trackMouseMovement: !this.state.trackMouseMovement
+    });
+  }
+
+  handleShowHeatMap () {
+    this.setState({
+      showHeatmap: !this.state.showHeatmap
+    });
+  }
+
   render () {
     const {
       history,
@@ -177,6 +197,7 @@ export class CoreLayout extends React.Component {
         zIndex: styles.appBar.zIndex - 1
       };
       styles.appBar.marginLeft = 256;
+      styles.appBar.width = width-256;
       styles.root.paddingLeft = 256;
       styles.footer.paddingLeft = 256;
     }
@@ -188,6 +209,25 @@ export class CoreLayout extends React.Component {
           zDepth={0}
           style={styles.appBar}
           showMenuIconButton={showMenuIconButton}
+          iconElementRight={
+            <IconMenu
+              iconButtonElement={
+                <IconButton><MoreVertIcon /></IconButton>
+              }
+              targetOrigin={{horizontal: 'right', vertical: 'top'}}
+              anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+            >
+              <MenuItem primaryText='Track Movement'
+                checked={this.state.trackMouseMovement}
+                onTouchTap={this.handleTrackMouseMovement}
+                insetChildren />
+              <MenuItem primaryText='Show Heat Map'
+                checked={this.state.showHeatmap}
+                disabled={!this.state.trackMouseMovement}
+                onTouchTap={this.handleShowHeatMap}
+                insetChildren />
+            </IconMenu>
+    }
         />
         {title !== ''
           ? (
