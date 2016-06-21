@@ -1,8 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateTask } from '../../redux/modules/task';
-import * as WebGLHeatMap from './webgl-heatmap';
+import { setData } from '../../redux/modules/mouseData';
+import './webgl-heatmap';
 
 class HeatMap extends Component {
 
@@ -18,22 +18,13 @@ class HeatMap extends Component {
       window.mozRequestAnimationFrame ||
       window.webkitRequestAnimationFrame ||
       window.msRequestAnimationFrame;
-    var mapCanvas = document.getElementById('heatmap');
-    this.heatmap = WebGLHeatMap.createWebGLHeatmap({
-      canvas: mapCanvas,
-      intensityToAlpha: true
-    });
-    console.debug(this.heatmap);
-  }
-
-  componentWillMount () {
-    this.update();
   }
 
   static propTypes = {
     topOffset: PropTypes.number,
     leftOffset: PropTypes.number,
-    display: PropTypes.bool
+    display: PropTypes.bool,
+    track: PropTypes.bool
   }
 
   paintAtCoord = (x, y) => {
@@ -57,9 +48,12 @@ class HeatMap extends Component {
   }
 
   handleMouseMovement = (event) => {
-    const x = event.offsetX || event.clientX;
-    const y = event.offsetY || event.clientY;
-    this.paintAtCoord(x, y);
+    const { track } = this.props;
+    if (track) {
+      const x = event.offsetX || event.clientX;
+      const y = event.offsetY || event.clientY;
+      this.paintAtCoord(x, y);
+    }
   }
 
   update = () => {
@@ -70,34 +64,51 @@ class HeatMap extends Component {
   }
 
   render () {
-    const { topOffset, leftOffset } = this.props;
+    // props data
+    const { topOffset, leftOffset, display } = this.props;
+    // styles
     const styles = {
       monitor: {
         marginTop: topOffset,
         marginLeft: leftOffset,
         height: '100%',
         width: '100%',
-        position: 'absolute'
+        position: 'absolute',
+        background: 'none'
       },
       heatmap: {
-        marginTop: topOffset,
+        marginTop: '0',
         marginLeft: leftOffset,
-        height: '100%',
+        height: `calc(100vh - ${topOffset})`,
         width: '100%',
         position: 'absolute'
       }
     };
 
+    // create heatmap instance
+    var mapCanvas = document.getElementById('heatmap');
+    /* eslint-disable no-undef */
+    this.heatmap = createWebGLHeatmap({canvas: mapCanvas});
+    console.debug(this.heatmap);
+    this.update();
+
+    let canvasElement;
+    if (display) {
+      canvasElement = <canvas id='heatmap' style={styles.heatmap} ></canvas>;
+    } else {
+      canvasElement = <canvas id='heatmap' style={styles.heatmap} ></canvas>;
+    }
+
     return (
       <div id='mouse-monitor' style={styles.monitor} onMouseMove={this.handleMouseMovement}>
-        <canvas id='heatmap' style={styles.heatmap}></canvas>
+        {canvasElement}
       </div>
     );
   }
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateTask
+  setData
 }, dispatch);
 
 export default connect(null, mapDispatchToProps)(HeatMap);

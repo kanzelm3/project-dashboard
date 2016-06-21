@@ -146,7 +146,8 @@ export class CoreLayout extends React.Component {
 
   handleTrackMouseMovement () {
     this.setState({
-      trackMouseMovement: !this.state.trackMouseMovement
+      trackMouseMovement: !this.state.trackMouseMovement,
+      showHeatmap: false
     });
   }
 
@@ -231,9 +232,10 @@ export class CoreLayout extends React.Component {
     }
         />
         <HeatMap
-          xOffset={0}
-          yOffset={64}
+          topOffset={64}
+          leftOffset={0}
           display={this.state.showHeatmap}
+          track={this.state.trackMouseMovement}
           >
             {title !== ''
               ? (
@@ -247,16 +249,16 @@ export class CoreLayout extends React.Component {
               )
               : children
             }
-          <AppLeftNav
-            style={styles.leftNav}
-            history={history}
-            location={location}
-            docked={docked}
-            onRequestChangeLeftNav={this.handleChangeRequestLeftNav}
-            onRequestChangeList={this.handleRequestChangeList}
-            open={leftNavOpen}
-          />
         </HeatMap>
+        <AppLeftNav
+          style={styles.leftNav}
+          history={history}
+          location={location}
+          docked={docked}
+          onRequestChangeLeftNav={this.handleChangeRequestLeftNav}
+          onRequestChangeList={this.handleRequestChangeList}
+          open={leftNavOpen}
+        />
       </div>
     );
   }
