@@ -11,6 +11,7 @@ import MenuItem from 'material-ui/lib/menus/menu-item';
 import Theme from '../../helpers/theme';
 import withViewport from '../../helpers/withViewport';
 import AppLeftNav from './AppLeftNav';
+import HeatMap from 'components/HeatMap/HeatMap';
 import '../../styles/core.scss';
 
 const mapDispatchToProps = (dispatch) => {
@@ -229,27 +230,33 @@ export class CoreLayout extends React.Component {
             </IconMenu>
     }
         />
-        {title !== ''
-          ? (
-          <div style={prepareStyles(styles.root)}>
-            <div style={prepareStyles(styles.content)}>
-              {React.cloneElement(children, {
-                onChangeMuiTheme: this.handleChangeMuiTheme
-              })}
-            </div>
-          </div>
-          )
-          : children
-        }
-        <AppLeftNav
-          style={styles.leftNav}
-          history={history}
-          location={location}
-          docked={docked}
-          onRequestChangeLeftNav={this.handleChangeRequestLeftNav}
-          onRequestChangeList={this.handleRequestChangeList}
-          open={leftNavOpen}
-        />
+        <HeatMap
+          xOffset={0}
+          yOffset={64}
+          display={this.state.showHeatmap}
+          >
+            {title !== ''
+              ? (
+              <div style={prepareStyles(styles.root)}>
+                <div style={prepareStyles(styles.content)}>
+                  {React.cloneElement(children, {
+                    onChangeMuiTheme: this.handleChangeMuiTheme
+                  })}
+                </div>
+              </div>
+              )
+              : children
+            }
+          <AppLeftNav
+            style={styles.leftNav}
+            history={history}
+            location={location}
+            docked={docked}
+            onRequestChangeLeftNav={this.handleChangeRequestLeftNav}
+            onRequestChangeList={this.handleRequestChangeList}
+            open={leftNavOpen}
+          />
+        </HeatMap>
       </div>
     );
   }
