@@ -1,7 +1,4 @@
 import React, { PropTypes, Component } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { setData } from '../../redux/modules/mouseData';
 import './webgl-heatmap';
 
 class HeatMap extends Component {
@@ -9,55 +6,74 @@ class HeatMap extends Component {
   constructor (props) {
     super(props);
     // scope binding
-    this.paintAtCoord = this.paintAtCoord.bind(this);
+    this.paintHeatMap = this.paintHeatMap.bind(this);
     this.handleMouseMovement = this.handleMouseMovement.bind(this);
     this.update = this.update.bind(this);
+  }
 
-    // member vars
-    this.raf = window.requestAnimationFrame ||
-      window.mozRequestAnimationFrame ||
-      window.webkitRequestAnimationFrame ||
-      window.msRequestAnimationFrame;
+  componentDidUpdate = () => {
+    const { display } = this.props;
+
+    if (display) {
+      const raf = window.requestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.msRequestAnimationFrame;
+      // create heatmap instance
+      var mapCanvas = document.getElementById('heatmap');
+      /* eslint-disable no-undef */
+      this.heatmap = createWebGLHeatmap({canvas: mapCanvas});
+      this.paintHeatMap(this.heatmap);
+      raf(this.update.bind(this));
+    } else {
+      // clear the mouse data
+      this.mouseData = [];
+    }
   }
 
   static propTypes = {
     topOffset: PropTypes.number,
     leftOffset: PropTypes.number,
     display: PropTypes.bool,
-    track: PropTypes.bool
+    track: PropTypes.bool,
+    addData: PropTypes.func,
+    clearData: PropTypes.func,
+    mouseCoordinates: PropTypes.object
   }
 
-  paintAtCoord = (x, y) => {
-    console.debug(x, y);
-    var count = 0;
-    while (count < 200) {
-      var xoff = Math.random() * 2 - 1;
-      var yoff = Math.random() * 2 - 1;
-      var l = xoff * xoff + yoff * yoff;
-      if (l > 1) {
-        continue;
+  paintHeatMap = (heatmap) => {
+    this.mouseData.forEach((entry) => {
+      const x = entry.x;
+      const y = entry.y;
+      var count = 0;
+      while (count < 200) {
+        var xoff = Math.random() * 2 - 1;
+        var yoff = Math.random() * 2 - 1;
+        var l = xoff * xoff + yoff * yoff;
+        if (l > 1) {
+          continue;
+        }
+        var ls = Math.sqrt(l);
+        xoff /= ls;
+        yoff /= ls;
+        xoff *= 1 - l;
+        yoff *= 1 - l;
+        count += 1;
+        heatmap.addPoint(x + xoff * 50, y + yoff * 50, 20, 2 / 300);
       }
-      var ls = Math.sqrt(l);
-      xoff /= ls;
-      yoff /= ls;
-      xoff *= 1 - l;
-      yoff *= 1 - l;
-      count += 1;
-      this.heatmap.addPoint(x + xoff * 50, y + yoff * 50, 20, 2 / 300);
-    }
+    });
   }
 
   handleMouseMovement = (event) => {
     const { track } = this.props;
     if (track) {
-      const x = event.offsetX || event.clientX;
-      const y = event.offsetY || event.clientY;
-      this.paintAtCoord(x, y);
+      const xVal = event.offsetX || event.clientX;
+      const yVal = event.offsetY || event.clientY;
+      this.mouseData.push({x: xVal, y: yVal});
     }
   }
 
   update = () => {
-    console.debug('update called');
     this.heatmap.adjustSize();
     this.heatmap.update();
     this.heatmap.display();
@@ -65,50 +81,43 @@ class HeatMap extends Component {
 
   render () {
     // props data
-    const { topOffset, leftOffset, display } = this.props;
+    const { display, track } = this.props;
+
     // styles
     const styles = {
       monitor: {
-        marginTop: topOffset,
-        marginLeft: leftOffset,
         height: '100%',
         width: '100%',
         position: 'absolute',
-        background: 'none'
+        zIndex: '1101',
+        background: 'none !important'
       },
       heatmap: {
-        marginTop: '0',
-        marginLeft: leftOffset,
-        height: `calc(100vh - ${topOffset})`,
+        marginTop: 0,
+        marginLeft: 0,
+        height: '100%',
         width: '100%',
-        position: 'absolute'
+        position: 'absolute',
+        zIndex: '1101',
+        overflow: 'hidden'
       }
     };
 
-    // create heatmap instance
-    var mapCanvas = document.getElementById('heatmap');
-    /* eslint-disable no-undef */
-    this.heatmap = createWebGLHeatmap({canvas: mapCanvas});
-    console.debug(this.heatmap);
-    this.update();
-
-    let canvasElement;
+    let element;
     if (display) {
-      canvasElement = <canvas id='heatmap' style={styles.heatmap} ></canvas>;
+      // create canvas element to paint heatmap
+      element = <canvas id='heatmap' style={styles.heatmap} ></canvas>;
+    } else if (!display && track) {
+      this.mouseData = [];
+      // create div to track mouse movement
+      element = <div id='mouse-monitor' style={styles.monitor} onMouseMove={this.handleMouseMovement}> </div>;
     } else {
-      canvasElement = <canvas id='heatmap' style={styles.heatmap} ></canvas>;
+      element = null;
     }
-
     return (
-      <div id='mouse-monitor' style={styles.monitor} onMouseMove={this.handleMouseMovement}>
-        {canvasElement}
-      </div>
+      element
     );
   }
 }
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setData
-}, dispatch);
-
-export default connect(null, mapDispatchToProps)(HeatMap);
+export default (HeatMap);

@@ -8,23 +8,21 @@ padded-blocks,
 no-unused-vars,
 no-multiple-empty-lines,
 no-return-assign,
-no-sequences */
-(function () {
+no-sequences,
+space-before-function-paren,
+yoda,
+quotes */
+(function() {
   var Framebuffer, Heights, Node, Shader, Texture, WebGLHeatmap, fragmentShaderBlit, nukeVendorPrefix, textureFloatShims, vertexShaderBlit,
-    __indexOf = [].indexOf || function (item) {
-      for (var i = 0, l = this.length; i < l; i++) {
-        if (i in this && this[i] === item) return i;
-      }
-      return -1;
-    };
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  nukeVendorPrefix = function () {
+  nukeVendorPrefix = function() {
     var getExtension, getSupportedExtensions, vendorRe, vendors;
     if (window.WebGLRenderingContext != null) {
       vendors = ['WEBKIT', 'MOZ', 'MS', 'O'];
       vendorRe = /^WEBKIT_(.*)|MOZ_(.*)|MS_(.*)|O_(.*)/;
       getExtension = WebGLRenderingContext.prototype.getExtension;
-      WebGLRenderingContext.prototype.getExtension = function (name) {
+      WebGLRenderingContext.prototype.getExtension = function(name) {
         var extobj, match, vendor, _i, _len;
         match = name.match(vendorRe);
         if (match !== null) {
@@ -45,7 +43,7 @@ no-sequences */
         }
       };
       getSupportedExtensions = WebGLRenderingContext.prototype.getSupportedExtensions;
-      WebGLRenderingContext.prototype.getSupportedExtensions = function () {
+      return WebGLRenderingContext.prototype.getSupportedExtensions = function() {
         var extension, match, result, supported, _i, _len;
         supported = getSupportedExtensions.call(this);
         result = [];
@@ -61,26 +59,12 @@ no-sequences */
         }
         return result;
       };
-      return WebGLRenderingContext.prototype.getSupportedExtensions;
     }
   };
 
-  textureFloatShims = function () {
-    var checkColorBuffer,
-      checkFloatLinear,
-      checkSupport,
-      checkTexture,
-      createSourceCanvas,
-      getExtension,
-      getSupportedExtensions,
-      name,
-      shimExtensions,
-      shimLookup,
-      unshimExtensions,
-      unshimLookup,
-      _i,
-      _len;
-    createSourceCanvas = function () {
+  textureFloatShims = function() {
+    var checkColorBuffer, checkFloatLinear, checkSupport, checkTexture, createSourceCanvas, getExtension, getSupportedExtensions, name, shimExtensions, shimLookup, unshimExtensions, unshimLookup, _i, _len;
+    createSourceCanvas = function() {
       var canvas, ctx, imageData;
       canvas = document.createElement('canvas');
       canvas.width = 2;
@@ -92,34 +76,19 @@ no-sequences */
       return canvas;
     };
     createSourceCanvas();
-    checkFloatLinear = function (gl, sourceType) {
-      var buffer,
-        cleanup,
-        fragmentShader,
-        framebuffer,
-        positionLoc,
-        program,
-        readBuffer,
-        result,
-        source,
-        sourceCanvas,
-        sourceLoc,
-        target,
-        vertexShader,
-        vertices;
+    checkFloatLinear = function(gl, sourceType) {
+      var buffer, cleanup, fragmentShader, framebuffer, positionLoc, program, readBuffer, result, source, sourceCanvas, sourceLoc, target, vertexShader, vertices;
       program = gl.createProgram();
       vertexShader = gl.createShader(gl.VERTEX_SHADER);
       gl.attachShader(program, vertexShader);
-      gl.shaderSource(vertexShader,
-        'attribute vec2 position;\nvoid main(){\n    gl_Position = vec4(position, 0.0, 1.0);\n}');
+      gl.shaderSource(vertexShader, 'attribute vec2 position;\nvoid main(){\n    gl_Position = vec4(position, 0.0, 1.0);\n}');
       gl.compileShader(vertexShader);
       if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
         throw gl.getShaderInfoLog(vertexShader);
       }
       fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
       gl.attachShader(program, fragmentShader);
-      gl.shaderSource(fragmentShader,
-        'uniform sampler2D source;\nvoid main(){\n    gl_FragColor = texture2D(source, vec2(1.0, 1.0));\n}');
+      gl.shaderSource(fragmentShader, 'uniform sampler2D source;\nvoid main(){\n    gl_FragColor = texture2D(source, vec2(1.0, 1.0));\n}');
       gl.compileShader(fragmentShader);
       if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
         throw gl.getShaderInfoLog(fragmentShader);
@@ -129,7 +98,7 @@ no-sequences */
         throw gl.getProgramInfoLog(program);
       }
       gl.useProgram(program);
-      cleanup = function () {
+      cleanup = function() {
         gl.deleteShader(fragmentShader);
         gl.deleteShader(vertexShader);
         gl.deleteProgram(program);
@@ -172,7 +141,7 @@ no-sequences */
       cleanup();
       return result;
     };
-    checkTexture = function (gl, targetType) {
+    checkTexture = function(gl, targetType) {
       var target;
       target = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, target);
@@ -185,7 +154,7 @@ no-sequences */
         return false;
       }
     };
-    checkColorBuffer = function (gl, targetType) {
+    checkColorBuffer = function(gl, targetType) {
       var check, framebuffer, target;
       target = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, target);
@@ -207,7 +176,7 @@ no-sequences */
     shimExtensions = [];
     shimLookup = {};
     unshimExtensions = [];
-    checkSupport = function () {
+    checkSupport = function() {
       var canvas, extobj, gl, halfFloatExt, halfFloatTexturing, singleFloatExt, singleFloatTexturing;
       canvas = document.createElement('canvas');
       gl = null;
@@ -327,10 +296,9 @@ no-sequences */
           if (extobj === null) {
             if (checkFloatLinear(gl, halfFloatExt.HALF_FLOAT_OES)) {
               shimExtensions.push('OES_texture_half_float_linear');
-              shimLookup.OES_texture_half_float_linear = {
+              return shimLookup.OES_texture_half_float_linear = {
                 shim: true
               };
-              return shimLookup.OES_texture_half_float_linear;
             } else {
               return unshimExtensions.push('OES_texture_half_float_linear');
             }
@@ -352,7 +320,7 @@ no-sequences */
         unshimLookup[name] = true;
       }
       getExtension = WebGLRenderingContext.prototype.getExtension;
-      WebGLRenderingContext.prototype.getExtension = function (name) {
+      WebGLRenderingContext.prototype.getExtension = function(name) {
         var extobj;
         extobj = shimLookup[name];
         if (extobj === void 0) {
@@ -366,7 +334,7 @@ no-sequences */
         }
       };
       getSupportedExtensions = WebGLRenderingContext.prototype.getSupportedExtensions;
-      WebGLRenderingContext.prototype.getSupportedExtensions = function () {
+      WebGLRenderingContext.prototype.getSupportedExtensions = function() {
         var extension, result, supported, _j, _k, _len1, _len2;
         supported = getSupportedExtensions.call(this);
         result = [];
@@ -384,22 +352,8 @@ no-sequences */
         }
         return result;
       };
-      WebGLRenderingContext.prototype.getFloatExtension = function (spec) {
-        var candidate,
-          candidates,
-          half,
-          halfFramebuffer,
-          halfLinear,
-          halfTexture,
-          i,
-          importance,
-          preference,
-          result,
-          single,
-          singleFramebuffer,
-          singleLinear,
-          singleTexture, use, _j, _k, _l, _len1, _len2,
-          _len3, _len4, _m, _ref, _ref1, _ref2;
+      return WebGLRenderingContext.prototype.getFloatExtension = function(spec) {
+        var candidate, candidates, half, halfFramebuffer, halfLinear, halfTexture, i, importance, preference, result, single, singleFramebuffer, singleLinear, singleTexture, use, _j, _k, _l, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2;
         if (spec.prefer == null) {
           spec.prefer = ['half'];
         }
@@ -468,7 +422,7 @@ no-sequences */
             }
           }
         }
-        result.sort(function (a, b) {
+        result.sort(function(a, b) {
           if (a.score === b.score) {
             return 0;
           } else if (a.score < b.score) {
@@ -479,7 +433,7 @@ no-sequences */
         });
         if (result.length === 0) {
           if (spec.throws) {
-            throw Object.assign('No floating point texture support that is ' + spec.require.join(', '));
+            throw 'No floating point texture support that is ' + spec.require.join(', ');
           } else {
             return null;
           }
@@ -493,7 +447,6 @@ no-sequences */
           };
         }
       };
-      return WebGLRenderingContext.prototype.getFloatExtension;
     }
   };
 
@@ -501,12 +454,11 @@ no-sequences */
 
   textureFloatShims();
 
-  Shader = (function () {
-    function Shader (gl, _arg) {
+  Shader = (function() {
+    function Shader(gl, _arg) {
       var fragment, vertex;
       this.gl = gl;
-      vertex = _arg.vertex;
-      fragment = _arg.fragment;
+      vertex = _arg.vertex, fragment = _arg.fragment;
       this.program = this.gl.createProgram();
       this.vs = this.gl.createShader(this.gl.VERTEX_SHADER);
       this.fs = this.gl.createShader(this.gl.FRAGMENT_SHADER);
@@ -520,7 +472,7 @@ no-sequences */
       this.attribCache = {};
     }
 
-    Shader.prototype.attribLocation = function (name) {
+    Shader.prototype.attribLocation = function(name) {
       var location;
       location = this.attribCache[name];
       if (location === void 0) {
@@ -529,27 +481,27 @@ no-sequences */
       return location;
     };
 
-    Shader.prototype.compileShader = function (shader, source) {
+    Shader.prototype.compileShader = function(shader, source) {
       this.gl.shaderSource(shader, source);
       this.gl.compileShader(shader);
       if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-        throw Object.assign('Shader Compile Error: ' + (this.gl.getShaderInfoLog(shader)));
+        throw "Shader Compile Error: " + (this.gl.getShaderInfoLog(shader));
       }
     };
 
-    Shader.prototype.link = function () {
+    Shader.prototype.link = function() {
       this.gl.linkProgram(this.program);
       if (!this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS)) {
-        throw Object.assign('Shader Link Error: ' + (this.gl.getProgramInfoLog(this.program)));
+        throw "Shader Link Error: " + (this.gl.getProgramInfoLog(this.program));
       }
     };
 
-    Shader.prototype.use = function () {
+    Shader.prototype.use = function() {
       this.gl.useProgram(this.program);
       return this;
     };
 
-    Shader.prototype.uniformLoc = function (name) {
+    Shader.prototype.uniformLoc = function(name) {
       var location;
       location = this.uniform_cache[name];
       if (location === void 0) {
@@ -558,7 +510,7 @@ no-sequences */
       return location;
     };
 
-    Shader.prototype.int = function (name, value) {
+    Shader.prototype.int = function(name, value) {
       var cached, loc;
       cached = this.value_cache[name];
       if (cached !== value) {
@@ -571,7 +523,7 @@ no-sequences */
       return this;
     };
 
-    Shader.prototype.vec2 = function (name, a, b) {
+    Shader.prototype.vec2 = function(name, a, b) {
       var loc;
       loc = this.uniformLoc(name);
       if (loc) {
@@ -580,7 +532,7 @@ no-sequences */
       return this;
     };
 
-    Shader.prototype.float = function (name, value) {
+    Shader.prototype.float = function(name, value) {
       var cached, loc;
       cached = this.value_cache[name];
       if (cached !== value) {
@@ -594,29 +546,30 @@ no-sequences */
     };
 
     return Shader;
+
   })();
 
-  Framebuffer = (function () {
-    function Framebuffer (gl) {
+  Framebuffer = (function() {
+    function Framebuffer(gl) {
       this.gl = gl;
       this.buffer = this.gl.createFramebuffer();
     }
 
-    Framebuffer.prototype.destroy = function () {
+    Framebuffer.prototype.destroy = function() {
       return this.gl.deleteFRamebuffer(this.buffer);
     };
 
-    Framebuffer.prototype.bind = function () {
+    Framebuffer.prototype.bind = function() {
       this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.buffer);
       return this;
     };
 
-    Framebuffer.prototype.unbind = function () {
+    Framebuffer.prototype.unbind = function() {
       this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
       return this;
     };
 
-    Framebuffer.prototype.check = function () {
+    Framebuffer.prototype.check = function() {
       var result;
       result = this.gl.checkFramebufferStatus(this.gl.FRAMEBUFFER);
       switch (result) {
@@ -635,27 +588,28 @@ no-sequences */
       return this;
     };
 
-    Framebuffer.prototype.color = function (texture) {
+    Framebuffer.prototype.color = function(texture) {
       this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, texture.target, texture.handle, 0);
       this.check();
       return this;
     };
 
-    Framebuffer.prototype.depth = function (buffer) {
+    Framebuffer.prototype.depth = function(buffer) {
       this.gl.framebufferRenderbuffer(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.RENDERBUFFER, buffer.id);
       this.check();
       return this;
     };
 
-    Framebuffer.prototype.destroy = function () {
+    Framebuffer.prototype.destroy = function() {
       return this.gl.deleteFramebuffer(this.buffer);
     };
 
     return Framebuffer;
+
   })();
 
-  Texture = (function () {
-    function Texture (gl, params) {
+  Texture = (function() {
+    function Texture(gl, params) {
       var _ref, _ref1;
       this.gl = gl;
       if (params == null) {
@@ -684,65 +638,66 @@ no-sequences */
       this.handle = this.gl.createTexture();
     }
 
-    Texture.prototype.destroy = function () {
+    Texture.prototype.destroy = function() {
       return this.gl.deleteTexture(this.handle);
     };
 
-    Texture.prototype.bind = function (unit) {
+    Texture.prototype.bind = function(unit) {
       if (unit == null) {
         unit = 0;
       }
       if (unit > 15) {
-        throw Object.assign('Texture unit too large: ' + unit);
+        throw 'Texture unit too large: ' + unit;
       }
       this.gl.activeTexture(this.gl.TEXTURE0 + unit);
       this.gl.bindTexture(this.target, this.handle);
       return this;
     };
 
-    Texture.prototype.setSize = function (width, height) {
+    Texture.prototype.setSize = function(width, height) {
       this.width = width;
       this.height = height;
       this.gl.texImage2D(this.target, 0, this.channels, this.width, this.height, 0, this.channels, this.type, null);
       return this;
     };
 
-    Texture.prototype.upload = function (data) {
+    Texture.prototype.upload = function(data) {
       this.width = data.width;
       this.height = data.height;
       this.gl.texImage2D(this.target, 0, this.channels, this.channels, this.type, data);
       return this;
     };
 
-    Texture.prototype.linear = function () {
+    Texture.prototype.linear = function() {
       this.gl.texParameteri(this.target, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
       this.gl.texParameteri(this.target, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
       return this;
     };
 
-    Texture.prototype.nearest = function () {
+    Texture.prototype.nearest = function() {
       this.gl.texParameteri(this.target, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
       this.gl.texParameteri(this.target, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
       return this;
     };
 
-    Texture.prototype.clampToEdge = function () {
+    Texture.prototype.clampToEdge = function() {
       this.gl.texParameteri(this.target, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
       this.gl.texParameteri(this.target, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
       return this;
     };
 
-    Texture.prototype.repeat = function () {
+    Texture.prototype.repeat = function() {
       this.gl.texParameteri(this.target, this.gl.TEXTURE_WRAP_S, this.gl.REPEAT);
       this.gl.texParameteri(this.target, this.gl.TEXTURE_WRAP_T, this.gl.REPEAT);
       return this;
     };
 
     return Texture;
+
   })();
 
-  Node = (function () {
-    function Node (gl, width, height) {
+  Node = (function() {
+    function Node(gl, width, height) {
       var floatExt;
       this.gl = gl;
       this.width = width;
@@ -756,33 +711,34 @@ no-sequences */
       this.fbo = new Framebuffer(this.gl).bind().color(this.texture).unbind();
     }
 
-    Node.prototype.use = function () {
+    Node.prototype.use = function() {
       return this.fbo.bind();
     };
 
-    Node.prototype.bind = function (unit) {
+    Node.prototype.bind = function(unit) {
       return this.texture.bind(unit);
     };
 
-    Node.prototype.end = function () {
+    Node.prototype.end = function() {
       return this.fbo.unbind();
     };
 
-    Node.prototype.resize = function (width, height) {
+    Node.prototype.resize = function(width, height) {
       this.width = width;
       this.height = height;
       return this.texture.bind(0).setSize(this.width, this.height);
     };
 
     return Node;
+
   })();
-  /* eslint-disable max-len */
+
   vertexShaderBlit = 'attribute vec4 position;\nvarying vec2 texcoord;\nvoid main(){\n    texcoord = position.xy*0.5+0.5;\n    gl_Position = position;\n}';
+
   fragmentShaderBlit = '#ifdef GL_FRAGMENT_PRECISION_HIGH\n    precision highp int;\n    precision highp float;\n#else\n    precision mediump int;\n    precision mediump float;\n#endif\nuniform sampler2D source;\nvarying vec2 texcoord;';
 
-
-  Heights = (function () {
-    function Heights (heatmap, gl, width, height) {
+  Heights = (function() {
+    function Heights(heatmap, gl, width, height) {
       var i, _i, _ref;
       this.heatmap = heatmap;
       this.gl = gl;
@@ -811,23 +767,21 @@ no-sequences */
       this.maxPointCount = 1024 * 10;
       this.vertexBufferData = new Float32Array(this.maxPointCount * this.vertexSize * 6);
       this.vertexBufferViews = [];
-      /* eslint-disable yoda */
       for (i = _i = 0, _ref = this.maxPointCount; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         this.vertexBufferViews.push(new Float32Array(this.vertexBufferData.buffer, 0, i * this.vertexSize * 6));
       }
-      /* eslint-enable yoda */
       this.bufferIndex = 0;
       this.pointCount = 0;
     }
-    /* eslint-enable max-len */
-    Heights.prototype.resize = function (width, height) {
+
+    Heights.prototype.resize = function(width, height) {
       this.width = width;
       this.height = height;
       this.nodeBack.resize(this.width, this.height);
       return this.nodeFront.resize(this.width, this.height);
     };
 
-    Heights.prototype.update = function () {
+    Heights.prototype.update = function() {
       var intensityLoc, positionLoc;
       if (this.pointCount > 0) {
         this.gl.enable(this.gl.BLEND);
@@ -849,14 +803,14 @@ no-sequences */
       }
     };
 
-    Heights.prototype.clear = function () {
+    Heights.prototype.clear = function() {
       this.nodeFront.use();
       this.gl.clearColor(0, 0, 0, 1);
       this.gl.clear(this.gl.COLOR_BUFFER_BIT);
       return this.nodeFront.end();
     };
 
-    Heights.prototype.clamp = function (min, max) {
+    Heights.prototype.clamp = function(min, max) {
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.heatmap.quad);
       this.gl.vertexAttribPointer(0, 4, this.gl.FLOAT, false, 0, 0);
       this.nodeFront.bind(0);
@@ -867,7 +821,7 @@ no-sequences */
       return this.swap();
     };
 
-    Heights.prototype.multiply = function (value) {
+    Heights.prototype.multiply = function(value) {
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.heatmap.quad);
       this.gl.vertexAttribPointer(0, 4, this.gl.FLOAT, false, 0, 0);
       this.nodeFront.bind(0);
@@ -878,7 +832,7 @@ no-sequences */
       return this.swap();
     };
 
-    Heights.prototype.blur = function () {
+    Heights.prototype.blur = function() {
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.heatmap.quad);
       this.gl.vertexAttribPointer(0, 4, this.gl.FLOAT, false, 0, 0);
       this.nodeFront.bind(0);
@@ -889,15 +843,14 @@ no-sequences */
       return this.swap();
     };
 
-    Heights.prototype.swap = function () {
+    Heights.prototype.swap = function() {
       var tmp;
       tmp = this.nodeFront;
       this.nodeFront = this.nodeBack;
-      this.nodeBack = tmp;
-      return this.nodeBack;
+      return this.nodeBack = tmp;
     };
 
-    Heights.prototype.addVertex = function (x, y, xs, ys, intensity) {
+    Heights.prototype.addVertex = function(x, y, xs, ys, intensity) {
       this.vertexBufferData[this.bufferIndex++] = x;
       this.vertexBufferData[this.bufferIndex++] = y;
       this.vertexBufferData[this.bufferIndex++] = xs;
@@ -905,11 +858,10 @@ no-sequences */
       this.vertexBufferData[this.bufferIndex++] = intensity;
       this.vertexBufferData[this.bufferIndex++] = intensity;
       this.vertexBufferData[this.bufferIndex++] = intensity;
-      this.vertexBufferData[this.bufferIndex++] = intensity;
-      return this.vertexBufferData[this.bufferIndex];
+      return this.vertexBufferData[this.bufferIndex++] = intensity;
     };
 
-    Heights.prototype.addPoint = function (x, y, size, intensity) {
+    Heights.prototype.addPoint = function(x, y, size, intensity) {
       var s;
       if (size == null) {
         size = 50;
@@ -935,8 +887,8 @@ no-sequences */
 
   })();
 
-  WebGLHeatmap = (function () {
-    function WebGLHeatmap (_arg) {
+  WebGLHeatmap = (function() {
+    function WebGLHeatmap(_arg) {
       var alphaEnd, alphaRange, alphaStart, error, getColorFun, gradientTexture, image, intensityToAlpha, output, quad, textureGradient, _ref, _ref1;
       _ref = _arg != null ? _arg : {}, this.canvas = _ref.canvas, this.width = _ref.width, this.height = _ref.height, intensityToAlpha = _ref.intensityToAlpha, gradientTexture = _ref.gradientTexture, alphaRange = _ref.alphaRange;
       if (!this.canvas) {
@@ -962,8 +914,8 @@ no-sequences */
       }
       if (window.WebGLDebugUtils != null) {
         console.log('debugging mode');
-        this.gl = WebGLDebugUtils.makeDebugContext(this.gl, function (err, funcName, args) {
-          throw WebGLDebugUtils.glEnumToString(err) + ' was caused by call to: ' + funcName;
+        this.gl = WebGLDebugUtils.makeDebugContext(this.gl, function(err, funcName, args) {
+          throw WebGLDebugUtils.glEnumToString(err) + " was caused by call to: " + funcName;
         });
       }
       this.gl.enableVertexAttribArray(0);
@@ -974,7 +926,7 @@ no-sequences */
         }).bind(0).setSize(2, 2).nearest().clampToEdge();
         if (typeof gradientTexture === 'string') {
           image = new Image();
-          image.onload = function () {
+          image.onload = function() {
             return textureGradient.bind().upload(image);
           };
           image.src = gradientTexture;
@@ -982,7 +934,7 @@ no-sequences */
           if (gradientTexture.width > 0 && gradientTexture.height > 0) {
             textureGradient.upload(gradientTexture);
           } else {
-            gradientTexture.onload = function () {
+            gradientTexture.onload = function() {
               return textureGradient.upload(gradientTexture);
             };
           }
@@ -997,13 +949,13 @@ no-sequences */
       }
       if (intensityToAlpha) {
         _ref1 = alphaRange != null ? alphaRange : [0, 1], alphaStart = _ref1[0], alphaEnd = _ref1[1];
-        output = 'vec4 alphaFun(vec3 color, float intensity){\n    float alpha = smoothstep(' + (alphaStart.toFixed(8)) + ', ' + (alphaEnd.toFixed(8)) + ', intensity);\n    return vec4(color*alpha, alpha);\n}';
+        output = "vec4 alphaFun(vec3 color, float intensity){\n    float alpha = smoothstep(" + (alphaStart.toFixed(8)) + ", " + (alphaEnd.toFixed(8)) + ", intensity);\n    return vec4(color*alpha, alpha);\n}";
       } else {
         output = 'vec4 alphaFun(vec3 color, float intensity){\n    return vec4(color, 1.0);\n}';
       }
       this.shader = new Shader(this.gl, {
         vertex: vertexShaderBlit,
-        fragment: fragmentShaderBlit + ('float linstep(float low, float high, float value){\n    return clamp((value-low)/(high-low), 0.0, 1.0);\n}\n\nfloat fade(float low, float high, float value){\n    float mid = (low+high)*0.5;\n    float range = (high-low)*0.5;\n    float x = 1.0 - clamp(abs(mid-value)/range, 0.0, 1.0);\n    return smoothstep(0.0, 1.0, x);\n}\n\n' + getColorFun + '\n' + output + '\n\nvoid main(){\n    float intensity = smoothstep(0.0, 1.0, texture2D(source, texcoord).r);\n    vec3 color = getColor(intensity);\n    gl_FragColor = alphaFun(color, intensity);\n}')
+        fragment: fragmentShaderBlit + ("float linstep(float low, float high, float value){\n    return clamp((value-low)/(high-low), 0.0, 1.0);\n}\n\nfloat fade(float low, float high, float value){\n    float mid = (low+high)*0.5;\n    float range = (high-low)*0.5;\n    float x = 1.0 - clamp(abs(mid-value)/range, 0.0, 1.0);\n    return smoothstep(0.0, 1.0, x);\n}\n\n" + getColorFun + "\n" + output + "\n\nvoid main(){\n    float intensity = smoothstep(0.0, 1.0, texture2D(source, texcoord).r);\n    vec3 color = getColor(intensity);\n    gl_FragColor = alphaFun(color, intensity);\n}")
       });
       if (this.width == null) {
         this.width = this.canvas.offsetWidth || 2;
@@ -1022,7 +974,7 @@ no-sequences */
       this.heights = new Heights(this, this.gl, this.width, this.height);
     }
 
-    WebGLHeatmap.prototype.adjustSize = function () {
+    WebGLHeatmap.prototype.adjustSize = function() {
       var canvasHeight, canvasWidth;
       canvasWidth = this.canvas.offsetWidth || 2;
       canvasHeight = this.canvas.offsetHeight || 2;
@@ -1036,7 +988,7 @@ no-sequences */
       }
     };
 
-    WebGLHeatmap.prototype.display = function () {
+    WebGLHeatmap.prototype.display = function() {
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.quad);
       this.gl.vertexAttribPointer(0, 4, this.gl.FLOAT, false, 0, 0);
       this.heights.nodeFront.bind(0);
@@ -1047,15 +999,15 @@ no-sequences */
       return this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
     };
 
-    WebGLHeatmap.prototype.update = function () {
+    WebGLHeatmap.prototype.update = function() {
       return this.heights.update();
     };
 
-    WebGLHeatmap.prototype.clear = function () {
+    WebGLHeatmap.prototype.clear = function() {
       return this.heights.clear();
     };
 
-    WebGLHeatmap.prototype.clamp = function (min, max) {
+    WebGLHeatmap.prototype.clamp = function(min, max) {
       if (min == null) {
         min = 0;
       }
@@ -1065,22 +1017,22 @@ no-sequences */
       return this.heights.clamp(min, max);
     };
 
-    WebGLHeatmap.prototype.multiply = function (value) {
+    WebGLHeatmap.prototype.multiply = function(value) {
       if (value == null) {
         value = 0.95;
       }
       return this.heights.multiply(value);
     };
 
-    WebGLHeatmap.prototype.blur = function () {
+    WebGLHeatmap.prototype.blur = function() {
       return this.heights.blur();
     };
 
-    WebGLHeatmap.prototype.addPoint = function (x, y, size, intensity) {
+    WebGLHeatmap.prototype.addPoint = function(x, y, size, intensity) {
       return this.heights.addPoint(x, y, size, intensity);
     };
 
-    WebGLHeatmap.prototype.addPoints = function (items) {
+    WebGLHeatmap.prototype.addPoints = function(items) {
       var item, _i, _len, _results;
       _results = [];
       for (_i = 0, _len = items.length; _i < _len; _i++) {
@@ -1094,7 +1046,7 @@ no-sequences */
 
   })();
 
-  window.createWebGLHeatmap = function (params) {
+  window.createWebGLHeatmap = function(params) {
     return new WebGLHeatmap(params);
   };
 

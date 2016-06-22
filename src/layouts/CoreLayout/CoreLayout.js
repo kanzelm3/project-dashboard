@@ -71,7 +71,7 @@ export class CoreLayout extends React.Component {
       appBar: {
         position: 'fixed',
         // Needed to overlap the examples
-        zIndex: this.state.muiTheme.zIndex.appBar + 1,
+        zIndex: this.state.muiTheme.zIndex.appBar + 2,
         top: 0,
         fontFamily: Theme.fontFamily
       },
@@ -196,7 +196,7 @@ export class CoreLayout extends React.Component {
       showMenuIconButton = false;
 
       styles.leftNav = {
-        zIndex: styles.appBar.zIndex - 1
+        zIndex: styles.appBar.zIndex - 2
       };
       styles.appBar.marginLeft = 256;
       styles.appBar.width = width-256;
@@ -232,24 +232,21 @@ export class CoreLayout extends React.Component {
     }
         />
         <HeatMap
-          topOffset={64}
-          leftOffset={0}
           display={this.state.showHeatmap}
           track={this.state.trackMouseMovement}
-          >
-            {title !== ''
-              ? (
-              <div style={prepareStyles(styles.root)}>
-                <div style={prepareStyles(styles.content)}>
-                  {React.cloneElement(children, {
-                    onChangeMuiTheme: this.handleChangeMuiTheme
-                  })}
-                </div>
-              </div>
-              )
-              : children
-            }
-        </HeatMap>
+          />
+        {title !== ''
+          ? (
+          <div style={prepareStyles(styles.root)}>
+            <div style={prepareStyles(styles.content)}>
+              {React.cloneElement(children, {
+                onChangeMuiTheme: this.handleChangeMuiTheme
+              })}
+            </div>
+          </div>
+          )
+          : children
+        }
         <AppLeftNav
           style={styles.leftNav}
           history={history}
