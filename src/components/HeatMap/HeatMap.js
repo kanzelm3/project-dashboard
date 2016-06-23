@@ -12,9 +12,16 @@ class HeatMap extends Component {
   }
 
   componentDidUpdate = () => {
-    const { display } = this.props;
+    const { display, track } = this.props;
+
+    if (track) {
+      window.addEventListener('mousemove', this.handleMouseMovement);
+    } else {
+      window.removeEventListener('mousemove', this.handleMouseMovement);
+    }
 
     if (display) {
+      window.removeEventListener('mousemove', this.handleMouseMovement);
       const raf = window.requestAnimationFrame ||
         window.mozRequestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -29,6 +36,10 @@ class HeatMap extends Component {
       // clear the mouse data
       this.mouseData = [];
     }
+  }
+
+  componentWillUnmount = () => {
+    window.removeEventListener('mousemove', this.handleMouseMovement);
   }
 
   static propTypes = {
@@ -67,8 +78,9 @@ class HeatMap extends Component {
   handleMouseMovement = (event) => {
     const { track } = this.props;
     if (track) {
-      const xVal = event.offsetX || event.clientX;
-      const yVal = event.offsetY || event.clientY;
+      const xVal = event.pageX;
+      const yVal = event.pageY;
+      console.debug(xVal, yVal);
       this.mouseData.push({x: xVal, y: yVal});
     }
   }
@@ -81,17 +93,10 @@ class HeatMap extends Component {
 
   render () {
     // props data
-    const { display, track } = this.props;
+    const { display } = this.props;
 
     // styles
     const styles = {
-      monitor: {
-        height: '100%',
-        width: '100%',
-        position: 'absolute',
-        zIndex: '1101',
-        background: 'none !important'
-      },
       heatmap: {
         marginTop: 0,
         marginLeft: 0,
@@ -107,10 +112,6 @@ class HeatMap extends Component {
     if (display) {
       // create canvas element to paint heatmap
       element = <canvas id='heatmap' style={styles.heatmap} ></canvas>;
-    } else if (!display && track) {
-      this.mouseData = [];
-      // create div to track mouse movement
-      element = <div id='mouse-monitor' style={styles.monitor} onMouseMove={this.handleMouseMovement}> </div>;
     } else {
       element = null;
     }
