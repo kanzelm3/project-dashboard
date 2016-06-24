@@ -103,8 +103,9 @@ class HeatMap extends Component {
         height: '100%',
         width: '100%',
         position: 'absolute',
-        zIndex: '1101',
-        overflow: 'hidden'
+        zIndex: '1103',
+        overflow: 'hidden',
+        pointerEvents: 'none'
       }
     };
 
