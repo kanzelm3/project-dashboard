@@ -80,7 +80,6 @@ class HeatMap extends Component {
     if (track) {
       const xVal = event.pageX;
       const yVal = event.pageY;
-      console.debug(xVal, yVal);
       this.mouseData.push({x: xVal, y: yVal});
     }
   }

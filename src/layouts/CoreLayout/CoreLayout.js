@@ -23,6 +23,7 @@ const mapDispatchToProps = (dispatch) => {
 export class CoreLayout extends React.Component {
 
   constructor () {
+    console.debug('Press CTRL to track mouse movement, and press Space to view the heat map');
     super();
     this.state = {
       muiTheme: ThemeManager.getMuiTheme(Theme),
@@ -35,6 +36,15 @@ export class CoreLayout extends React.Component {
     this.handleRequestChangeList = this.handleRequestChangeList.bind(this);
     this.handleTrackMouseMovement = this.handleTrackMouseMovement.bind(this);
     this.handleShowHeatMap = this.handleShowHeatMap.bind(this);
+    this.handleHotkey = this.handleHotkey.bind(this);
+  }
+
+  componentDidMount () {
+    window.addEventListener('keyup', this.handleHotkey);
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('keyup', this.handleHotkey);
   }
 
   static propTypes = {
@@ -56,6 +66,38 @@ export class CoreLayout extends React.Component {
   static defaultProps = {
     viewport: {}
   };
+
+  handleHotkey (evt) {
+    const key = evt.keyCode;
+    const { trackMouseMovement, showHeatmap } = this.state;
+
+    // CTRL key is pressed
+    if (key === 17) {
+      this.setState({
+        trackMouseMovement: !trackMouseMovement,
+        showHeatmap: false
+      });
+
+      trackMouseMovement
+      ? console.debug('Mouse Tracking Disabled')
+      : console.debug('Mouse Tracking Enabled');
+    }
+
+    // Space bar is pressed
+    if (key === 32) {
+      // only enable heatmap toggle if mouse tracking is enabled
+      if (trackMouseMovement) {
+        this.setState({
+          showHeatmap: !showHeatmap
+        });
+        showHeatmap
+        ? console.debug('Hiding Heat Map')
+        : console.debug('Displaying Heat Map');
+      } else {
+        console.debug('Mouse tracking not enabled');
+      }
+    }
+  }
 
   getChildContext () {
     return {
