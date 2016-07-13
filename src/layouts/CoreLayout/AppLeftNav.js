@@ -83,8 +83,7 @@ class AppLeftNav extends React.Component {
     };
 
     const menuItems = [
-      { primaryText: 'Summary', value: '/' },
-      { primaryText: 'Tasks', value: '/tasks' }
+      { primaryText: 'Tasks', value: '/' }
     ];
 
     return (
@@ -108,7 +107,7 @@ class AppLeftNav extends React.Component {
                 value={item.value}
                 key={i}
                 disabled={disableMenu}
-                style={menuStyle}/>;
+                style={menuStyle} />;
             })
           }
         </SelectableList>

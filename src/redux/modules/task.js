@@ -6,6 +6,7 @@ import moment from 'moment';
  */
 const ADD_TASK = 'ADD_TASK';
 const UPDATE_TASK = 'UPDATE_TASK';
+const DELETE_TASK = 'DELETE_TASK';
 
 export const initialTasks = [
   {
@@ -79,12 +80,23 @@ export const updateTask = (task) => ({
   }
 });
 
+export const deleteTask = (task) => ({
+  type: DELETE_TASK,
+  payload: {
+    task
+  }
+});
+
 const addTaskHandler = (state, { payload: { task } }) => {
   return state.set(task.get('id'), task);
 };
 
 const updateTaskHandler = (state, { payload: { task } }) => {
   return state.set(task.get('id'), task);
+};
+
+const deleteTaskHandler = (state, { payload: { task } }) => {
+  return state.delete(task.get('id'));
 };
 /**
  * Reducer for handling data actions
@@ -98,6 +110,9 @@ const taskReducer = (state = Map(), action) => {
 
     case UPDATE_TASK:
       return updateTaskHandler(state, action);
+
+    case DELETE_TASK:
+      return deleteTaskHandler(state, action);
 
     default:
       return state;

@@ -4,11 +4,21 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { addTask,
          updateTask,
+         deleteTask,
          getNewTask,
          initialTasks } from '../../redux/modules/task';
+import { durationHeader,
+         statusHeader,
+         beginHeader,
+         endHeader,
+         assigneeHeader,
+         completenessHeader,
+         tableStyles
+       } from 'helpers/tableStyles';
 import TaskItem from 'components/TaskItem/TaskItem';
 import NewTask from 'components/NewTask/NewTask';
 // material ui
+import Colors from 'material-ui/lib/styles/colors';
 import Dialog from 'material-ui/lib/dialog';
 import Table from 'material-ui/lib/table/table';
 import TableHeaderColumn from 'material-ui/lib/table/table-header-column';
@@ -29,6 +39,9 @@ class TaskView extends Component {
     this.createNewTask = this.createNewTask.bind(this);
     this.saveNewTask = this.saveNewTask.bind(this);
     this.saveEditTask = this.saveEditTask.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
+    this.updateDimensions = this.updateDimensions.bind(this);
+    const windowWidth = window.innerWidth;
     this.state = {
       sort: {
         key: 'end',
@@ -37,8 +50,17 @@ class TaskView extends Component {
       open: false,
       newTask: fromJS(getNewTask()),
       edit: false,
-      selectedTask: fromJS(getNewTask())
+      selectedTask: fromJS(getNewTask()),
+      width: windowWidth
     };
+  }
+
+  componentDidMount () {
+    window.addEventListener('resize', this.updateDimensions);
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.updateDimensions);
   }
 
   componentWillMount () {
@@ -51,7 +73,15 @@ class TaskView extends Component {
   static propTypes = {
     addTask: PropTypes.func,
     updateTask: PropTypes.func,
+    deleteTask: PropTypes.func,
     tasks: PropTypes.object
+  }
+
+  updateDimensions = () => {
+    const windowWidth = window.innerWidth;
+    this.setState({
+      width: windowWidth
+    });
   }
 
   handleSortClick = (key) => (evt) => {
@@ -116,6 +146,15 @@ class TaskView extends Component {
     });
   }
 
+  deleteTask () {
+    const { deleteTask } = this.props;
+    const { selectedTask } = this.state;
+    deleteTask(selectedTask);
+    this.setState({
+      edit: false
+    });
+  }
+
   handleClose = () => {
     this.setState({
       open: false
@@ -136,49 +175,8 @@ class TaskView extends Component {
   }
 
   render () {
-    const { newTask, selectedTask } = this.state;
+    const { newTask, selectedTask, width } = this.state;
     const sortedTasks = this.getSortedTasks();
-    const styles = {
-      taskHeader: {
-        cursor: 'pointer',
-        padding: '0'
-      },
-      columnLabel: {
-        padding: '22px'
-      },
-      label: {
-        lineHeight: '27px',
-        verticalAlign: 'middle'
-      },
-      active: {
-        fontWeight: 'bold',
-        color: '#000'
-      },
-      icon: {
-        marginLeft: '12px',
-        height: '18px',
-        width: '18px',
-        verticalAlign: 'middle'
-      },
-      xl: {
-        width: '275px'
-      },
-      l: {
-        width: '175px'
-      },
-      m: {
-        width: '130px'
-      },
-      s: {
-        width: '110px'
-      }
-    };
-
-    const durationHeader = Object.assign({}, styles.taskHeader, styles.s);
-    const statusHeader = Object.assign({}, styles.taskHeader, styles.m);
-    const dateHeader = Object.assign({}, styles.taskHeader, styles.l);
-    const assigneeHeader = Object.assign({}, styles.taskHeader, styles.l);
-    const completenessHeader = Object.assign({}, styles.taskHeader, styles.xl);
 
     const sortIcon = (key) => {
       const { sort } = this.state;
@@ -186,9 +184,9 @@ class TaskView extends Component {
       if (key === sort.key) {
         icon = sort.ascending
           ? <NavigationArrowDownward
-            style={styles.icon}/>
+            style={tableStyles.icon} />
           : <NavigationArrowUpward
-            style={styles.icon}/>;
+            style={tableStyles.icon} />;
       } else {
         icon = <div></div>;
       }
@@ -199,9 +197,9 @@ class TaskView extends Component {
       const { sort } = this.state;
       let style;
       if (key === sort.key) {
-        style = Object.assign(styles.active, styles.label);
+        style = Object.assign(tableStyles.active, tableStyles.label);
       } else {
-        style = styles.label;
+        style = tableStyles.label;
       }
       return style;
     };
@@ -209,25 +207,32 @@ class TaskView extends Component {
     const actions = [
       <FlatButton
         label='Cancel'
-        secondary
+        style={{color: Colors.grey500, fontWeight: 'bold'}}
         onTouchTap={this.handleClose}
       />,
       <FlatButton
         label='Add'
         primary
+        style={{fontWeight: 'bold'}}
         onTouchTap={this.saveNewTask}
       />
     ];
 
     const editActions = [
       <FlatButton
+        label='Delete'
+        onTouchTap={this.deleteTask}
+        style={{float: 'left', color: Colors.pink500, fontWeight: 'bold'}}
+      />,
+      <FlatButton
         label='Cancel'
-        secondary
+        style={{color: Colors.grey500, fontWeight: 'bold'}}
         onTouchTap={this.handleEditClose}
       />,
       <FlatButton
         label='Save'
         primary
+        style={{fontWeight: 'bold'}}
         onTouchTap={this.saveEditTask}
       />
     ];
@@ -238,45 +243,45 @@ class TaskView extends Component {
           <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
             <TableRow>
               // Task name
-              <TableHeaderColumn style={styles.taskHeader}>
+              <TableHeaderColumn style={tableStyles.taskHeader}>
                 <div
-                  style={styles.columnLabel}
+                  style={tableStyles.columnLabel}
                   onClick={this.handleSortClick('name')}>
                   <span style={labelStyle('name')}>Task</span>
                   {sortIcon('name')}
                 </div>
               </TableHeaderColumn>
               // Duration
-              <TableHeaderColumn style={durationHeader}>
+              <TableHeaderColumn style={durationHeader(width)}>
                 <div
-                  style={styles.columnLabel}
+                  style={tableStyles.columnLabel}
                   onClick={this.handleSortClick('duration')}>
                   <span style={labelStyle('duration')}>Duration</span>
                   {sortIcon('duration')}
                 </div>
               </TableHeaderColumn>
               // Begin Date
-              <TableHeaderColumn style={dateHeader}>
+              <TableHeaderColumn style={beginHeader(width)}>
                 <div
-                  style={styles.columnLabel}
+                  style={tableStyles.columnLabel}
                   onClick={this.handleSortClick('begin')}>
                   <span style={labelStyle('begin')}>Begin Date</span>
                   {sortIcon('begin')}
                 </div>
               </TableHeaderColumn>
               // End Date
-              <TableHeaderColumn style={dateHeader}>
+              <TableHeaderColumn style={endHeader(width)}>
                 <div
-                  style={styles.columnLabel}
+                  style={tableStyles.columnLabel}
                   onClick={this.handleSortClick('end')}>
                   <span style={labelStyle('end')}>End Date</span>
                   {sortIcon('end')}
                 </div>
               </TableHeaderColumn>
               // Assignee
-              <TableHeaderColumn style={assigneeHeader}>
+              <TableHeaderColumn style={assigneeHeader(width)}>
                 <div
-                  style={styles.columnLabel}
+                  style={tableStyles.columnLabel}
                   onClick={this.handleSortClick('assignee')}>
                   <span style={labelStyle('assignee')}>Assignee</span>
                   {sortIcon('assignee')}
@@ -285,7 +290,7 @@ class TaskView extends Component {
               // Status
               <TableHeaderColumn style={statusHeader}>
                 <div
-                  style={styles.columnLabel}
+                  style={tableStyles.columnLabel}
                   onClick={this.handleSortClick('status')}>
                   <span style={labelStyle('status')}>Status</span>
                   {sortIcon('status')}
@@ -294,7 +299,7 @@ class TaskView extends Component {
               // Completeness
               <TableHeaderColumn style={completenessHeader}>
                 <div
-                  style={styles.columnLabel}
+                  style={tableStyles.columnLabel}
                   onClick={this.handleSortClick('completeness')}>
                   <span style={labelStyle('completeness')}>Completeness</span>
                   {sortIcon('completeness')}
@@ -314,6 +319,7 @@ class TaskView extends Component {
                   task={task}
                   onUpdate={this.onTaskUpdate}
                   onEdit={this.handleRowClick}
+                  width={width}
                 />
               );
             })
@@ -367,7 +373,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   addTask,
-  updateTask
+  updateTask,
+  deleteTask
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(TaskView);

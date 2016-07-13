@@ -180,6 +180,7 @@ class TaskItem extends Component {
               <TextField
                 defaultValue={task.get('name')}
                 onBlur={this.setTitle}
+                onEnterKeyDown={this.setTitle}
                 style={{width: '100%'}}
               />
             </TableRowColumn>

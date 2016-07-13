@@ -7,18 +7,13 @@ import { Route, IndexRoute, Redirect } from 'react-router';
 // very easy to navigate to files regardless of how deeply nested
 // your current file is.
 import CoreLayout from 'layouts/CoreLayout/CoreLayout';
-import HomeView from 'views/HomeView/HomeView';
 import NotFoundView from 'views/NotFoundView/NotFoundView';
-import PlotView from 'views/PlotView/PlotView';
-import SummaryView from 'views/SummaryView/SummaryView';
 import TaskView from 'views/TaskView/TaskView';
 
 export default (store) => (
   <Route path='/' component={CoreLayout}>
-    <IndexRoute component={HomeView} />
+    <IndexRoute component={TaskView} />
     <Route path='/404' component={NotFoundView} />
-    <Route path='/plot/:plotType' component={PlotView} />
-    <Route path='/summary' component={SummaryView} />
     <Route path='/tasks' component={TaskView} />
     <Redirect from='*' to='/404' />
   </Route>
